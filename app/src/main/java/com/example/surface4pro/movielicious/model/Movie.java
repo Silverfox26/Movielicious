@@ -49,7 +49,7 @@ public class Movie implements Parcelable {
         }
     };
 
-    private Movie(Parcel in) {
+    protected Movie(Parcel in) {
         id = in.readInt();
         title = in.readString();
         originalTitle = in.readString();
@@ -212,9 +212,9 @@ public class Movie implements Parcelable {
         dest.writeInt(popularity);
         dest.writeString(posterPath);
         dest.writeString(backdropPath);
-        dest.writeValue(video);
+        dest.writeByte((byte) (video ? 1 : 0));
         dest.writeString(originalLanguage);
         dest.writeIntArray(genreIds);
-        dest.writeValue(onlyForAdults);
+        dest.writeByte((byte) (onlyForAdults ? 1 : 0));
     }
 }

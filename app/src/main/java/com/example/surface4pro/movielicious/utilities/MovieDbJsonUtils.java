@@ -9,12 +9,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public final class MovieDbJsonUtils {
 
-    public static List<Movie> getMovieDataFromJson(String movieJsonString) {
-        List<Movie> movieList = new ArrayList<Movie>();
+    public static ArrayList<Movie> getMovieDataFromJson(String movieJsonString) {
+        ArrayList<Movie> movieList = new ArrayList<Movie>();
 
         JSONObject movies = null;
         try {

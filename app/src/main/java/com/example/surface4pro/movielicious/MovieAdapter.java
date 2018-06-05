@@ -15,11 +15,12 @@ import android.widget.TextView;
 import com.example.surface4pro.movielicious.model.Movie;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
-    private List<Movie> mMovieData;
+    private ArrayList<Movie> mMovieData;
 
     /*
      * An on-click handler that we've defined to make it easy for an Activity to interface with
@@ -30,7 +31,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     /**
      * Creates a MovieAdapter.
      */
-    public MovieAdapter(MovieAdapterOnClickHandler clickHandler, List<Movie> movies) {
+    public MovieAdapter(MovieAdapterOnClickHandler clickHandler, ArrayList<Movie> movies) {
         this.mClickHandler = clickHandler;
         this.mMovieData = movies;
     }
@@ -151,7 +152,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         return mMovieData.size();
     }
 
-    public void setMovieData(List<Movie> movieData) {
+    public void setMovieData(ArrayList<Movie> movieData) {
         mMovieData = movieData;
         notifyDataSetChanged();
     }

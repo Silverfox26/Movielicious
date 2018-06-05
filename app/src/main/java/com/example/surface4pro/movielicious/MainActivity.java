@@ -1,12 +1,13 @@
 package com.example.surface4pro.movielicious;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.surface4pro.movielicious.model.Movie;
 import com.example.surface4pro.movielicious.utilities.MovieDbJsonUtils;
@@ -14,11 +15,11 @@ import com.example.surface4pro.movielicious.utilities.NetworkUtils;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
 
-    private List<Movie> movies = null;
+    private ArrayList<Movie> movies = null;
 
     private MovieAdapter mMovieAdapter;
     private RecyclerView mMoviesRecyclerView;
@@ -43,14 +44,23 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     @Override
     public void onClick(String clickedMovie) {
         Log.d("CLICK", clickedMovie);
-        Toast.makeText(this, clickedMovie, Toast.LENGTH_SHORT).show();
+
+        Context context = this;
+        Class destinationClass = DetailActivity.class;
+
+
+        Intent startDetailActivityIntent = new Intent(context, destinationClass);
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("movies", movies);
+        startDetailActivityIntent.putExtras(bundle);
+        startActivity(startDetailActivityIntent);
     }
 
 
-    public class FetchMoviesTask extends AsyncTask<URL, Void, List<Movie>> {
+    public class FetchMoviesTask extends AsyncTask<URL, Void, ArrayList<Movie>> {
 
         @Override
-        protected List<Movie> doInBackground(URL... urls) {
+        protected ArrayList<Movie> doInBackground(URL... urls) {
             URL queryUrl = urls[0];
             String movieQueryResults = null;
             try {
@@ -69,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         }
 
         @Override
-        protected void onPostExecute(List<Movie> movies) {
+        protected void onPostExecute(ArrayList<Movie> movies) {
             if (movies != null) {
                 mMovieAdapter.setMovieData(movies);
             }
