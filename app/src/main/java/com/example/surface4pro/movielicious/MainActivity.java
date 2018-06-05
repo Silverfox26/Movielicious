@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.surface4pro.movielicious.model.Movie;
 import com.example.surface4pro.movielicious.utilities.MovieDbJsonUtils;
@@ -15,7 +16,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
 
     private List<Movie> movies = null;
 
@@ -32,12 +33,19 @@ public class MainActivity extends AppCompatActivity {
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         mMoviesRecyclerView.setLayoutManager(layoutManager);
         mMoviesRecyclerView.setHasFixedSize(true);
-        mMovieAdapter = new MovieAdapter(movies);
+        mMovieAdapter = new MovieAdapter(this, movies);
         mMoviesRecyclerView.setAdapter(mMovieAdapter);
 
         URL url = NetworkUtils.buildURL();
         new FetchMoviesTask().execute(url);
     }
+
+    @Override
+    public void onClick(String clickedMovie) {
+        Log.d("CLICK", clickedMovie);
+        Toast.makeText(this, clickedMovie, Toast.LENGTH_SHORT).show();
+    }
+
 
     public class FetchMoviesTask extends AsyncTask<URL, Void, List<Movie>> {
 

@@ -21,11 +21,22 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     private List<Movie> mMovieData;
 
+    /*
+     * An on-click handler that we've defined to make it easy for an Activity to interface with
+     * our RecyclerView
+     */
+    private final MovieAdapterOnClickHandler mClickHandler;
+
     /**
      * Creates a MovieAdapter.
      */
-    public MovieAdapter(List<Movie> movies) {
+    public MovieAdapter(MovieAdapterOnClickHandler clickHandler, List<Movie> movies) {
+        this.mClickHandler = clickHandler;
         this.mMovieData = movies;
+    }
+
+    public interface MovieAdapterOnClickHandler {
+        void onClick(String clickedMovie);
     }
 
     /**
@@ -104,7 +115,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     /**
      * Cache of the children views for a forecast list item.
      */
-    public class MovieViewHolder extends RecyclerView.ViewHolder {
+    public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final ImageView mMovieImageView;
         public final TextView mMovieTitle;
 
@@ -112,6 +123,20 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             super(itemView);
             mMovieImageView = itemView.findViewById(R.id.iv_movie_poster);
             mMovieTitle = itemView.findViewById(R.id.tv_movie_title);
+            itemView.setOnClickListener(this);
+        }
+
+        /**
+         * Called when a view has been clicked.
+         *
+         * @param v The view that was clicked.
+         */
+        @Override
+        public void onClick(View v) {
+            int adapterPosition = getAdapterPosition();
+            String movieTitle = mMovieData.get(adapterPosition).getOriginalTitle();
+            mClickHandler.onClick(movieTitle);
+
         }
     }
 
