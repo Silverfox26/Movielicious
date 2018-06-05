@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         URL url = NetworkUtils.buildURL();
         new FetchMoviesTask().execute(url);
 
+        // TODO - Array with Movies objects is created. Next -> Using a Grid or RecyclerView to populate the MainActivity with the cover images.
     }
 
     public class FetchMoviesTask extends AsyncTask<URL, Void, String> {
