@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.surface4pro.movielicious.model.Movie;
 import com.squareup.picasso.Picasso;
@@ -51,7 +52,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
 
         String movieImagePath = mMovieData.get(position).getPosterPath();
-        Log.d("IMAGE", movieImagePath);
+        String movieTitle = mMovieData.get(position).getOriginalTitle();
+
+        holder.mMovieTitle.setText(movieTitle);
+
         Uri builtUri = Uri.parse("http://image.tmdb.org/t/p/").buildUpon()
                 .appendPath("w185")
                 .appendEncodedPath(movieImagePath)
@@ -102,10 +106,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
      */
     public class MovieViewHolder extends RecyclerView.ViewHolder {
         public final ImageView mMovieImageView;
+        public final TextView mMovieTitle;
 
         public MovieViewHolder(View itemView) {
             super(itemView);
             mMovieImageView = itemView.findViewById(R.id.iv_movie_poster);
+            mMovieTitle = itemView.findViewById(R.id.tv_movie_title);
         }
     }
 
