@@ -1,6 +1,9 @@
 package com.example.surface4pro.movielicious.model;
 
-public class Movie {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Movie implements Parcelable {
 
     private int id;
     private String title;
@@ -32,6 +35,35 @@ public class Movie {
         this.originalLanguage = originalLanguage;
         this.genreIds = genreIds;
         this.onlyForAdults = onlyForAdults;
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
+
+    private Movie(Parcel in) {
+        id = in.readInt();
+        title = in.readString();
+        originalTitle = in.readString();
+        voteCount = in.readInt();
+        voteAverage = in.readInt();
+        releaseDate = in.readString();
+        description = in.readString();
+        popularity = in.readInt();
+        posterPath = in.readString();
+        backdropPath = in.readString();
+        video = in.readByte() != 0;
+        originalLanguage = in.readString();
+        genreIds = in.createIntArray();
+        onlyForAdults = in.readByte() != 0;
     }
 
     public int getId() {
@@ -144,5 +176,45 @@ public class Movie {
 
     public void setOnlyForAdults(boolean onlyForAdults) {
         this.onlyForAdults = onlyForAdults;
+    }
+
+    /**
+     * Describe the kinds of special objects contained in this Parcelable
+     * instance's marshaled representation. For example, if the object will
+     * include a file descriptor in the output of {@link #writeToParcel(Parcel, int)},
+     * the return value of this method must include the
+     * {@link #CONTENTS_FILE_DESCRIPTOR} bit.
+     *
+     * @return a bitmask indicating the set of special object types marshaled
+     * by this Parcelable object instance.
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * Flatten this object in to a Parcel.
+     *
+     * @param dest  The Parcel in which the object should be written.
+     * @param flags Additional flags about how the object should be written.
+     *              May be 0 or {@link #PARCELABLE_WRITE_RETURN_VALUE}.
+     */
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(title);
+        dest.writeString(originalTitle);
+        dest.writeInt(voteCount);
+        dest.writeInt(voteAverage);
+        dest.writeString(releaseDate);
+        dest.writeString(description);
+        dest.writeInt(popularity);
+        dest.writeString(posterPath);
+        dest.writeString(backdropPath);
+        dest.writeValue(video);
+        dest.writeString(originalLanguage);
+        dest.writeIntArray(genreIds);
+        dest.writeValue(onlyForAdults);
     }
 }
