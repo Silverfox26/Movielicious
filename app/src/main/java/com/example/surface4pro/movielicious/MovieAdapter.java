@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,14 +14,17 @@ import android.widget.ListView;
 import com.example.surface4pro.movielicious.model.Movie;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
-    private Movie[] mMovieData;
+    private List<Movie> mMovieData;
 
     /**
      * Creates a MovieAdapter.
      */
-    public MovieAdapter() {
+    public MovieAdapter(List<Movie> movies) {
+        this.mMovieData = movies;
     }
 
     /**
@@ -46,15 +50,17 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
 
-        String movieImagePath = mMovieData[position].getPosterPath();
-
+        String movieImagePath = mMovieData.get(position).getPosterPath();
+        Log.d("IMAGE", movieImagePath);
         Uri builtUri = Uri.parse("http://image.tmdb.org/t/p/").buildUpon()
                 .appendPath("w185")
-                .appendPath(movieImagePath)
+                .appendEncodedPath(movieImagePath)
                 .build();
 
         String url = null;
         url = builtUri.toString();
+
+        Log.d("IMAGE", url);
 
         Picasso.get().load(url).into(holder.mMovieImageView);
     }
@@ -111,10 +117,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     @Override
     public int getItemCount() {
         if (mMovieData == null) return 0;
-        return mMovieData.length;
+        return mMovieData.size();
     }
 
-    public void setMovieData(Movie movieData[]) {
+    public void setMovieData(List<Movie> movieData) {
         mMovieData = movieData;
         notifyDataSetChanged();
     }

@@ -3,6 +3,8 @@ package com.example.surface4pro.movielicious;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.example.surface4pro.movielicious.model.Movie;
@@ -17,21 +19,30 @@ public class MainActivity extends AppCompatActivity {
 
     private List<Movie> movies = null;
 
+    private MovieAdapter mMovieAdapter;
+    private RecyclerView mMoviesRecyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // TODO - Array with Movies objects is created. Next -> Using a Grid or RecyclerView to populate the MainActivity with the cover images.
+        mMoviesRecyclerView = findViewById(R.id.rv_movies);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        mMoviesRecyclerView.setLayoutManager(layoutManager);
+        mMoviesRecyclerView.setHasFixedSize(true);
+        mMovieAdapter = new MovieAdapter(movies);
+        mMoviesRecyclerView.setAdapter(mMovieAdapter);
+
         URL url = NetworkUtils.buildURL();
         new FetchMoviesTask().execute(url);
-
-        // TODO - Array with Movies objects is created. Next -> Using a Grid or RecyclerView to populate the MainActivity with the cover images.
     }
 
-    public class FetchMoviesTask extends AsyncTask<URL, Void, String> {
+    public class FetchMoviesTask extends AsyncTask<URL, Void, List<Movie>> {
 
         @Override
-        protected String doInBackground(URL... urls) {
+        protected List<Movie> doInBackground(URL... urls) {
             URL queryUrl = urls[0];
             String movieQueryResults = null;
             try {
@@ -46,13 +57,13 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("MObject", movies.get(1).getOriginalTitle());
             }
 
-            return movieQueryResults;
+            return movies;
         }
 
         @Override
-        protected void onPostExecute(String movieQueryResults) {
-            if (movieQueryResults != null && !movieQueryResults.equals("")) {
-                Log.d("HTTP Result: ", movieQueryResults);
+        protected void onPostExecute(List<Movie> movies) {
+            if (movies != null) {
+                mMovieAdapter.setMovieData(movies);
             }
         }
     }
