@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // TODO - Save Rotation Scroll Position. Create Menu.
+        // TODO - Save Rotation Scroll Position. Convert Genre Numbers to Strings representations.
         mMoviesRecyclerView = findViewById(R.id.rv_movies);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         mMoviesRecyclerView.setLayoutManager(layoutManager);
@@ -42,8 +42,22 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mMovieAdapter = new MovieAdapter(this, movies);
         mMoviesRecyclerView.setAdapter(mMovieAdapter);
 
-        URL url = NetworkUtils.buildURL(R.id.menu_most_popular);
-        new FetchMoviesTask().execute(url);
+
+        if (savedInstanceState == null || !savedInstanceState.containsKey("movies")) {
+            URL url = NetworkUtils.buildURL(R.id.menu_most_popular);
+            new FetchMoviesTask().execute(url);
+        } else {
+            movies = savedInstanceState.getParcelableArrayList("movies");
+            if (movies != null) {
+                mMovieAdapter.setMovieData(movies);
+            }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("movies", movies);
+        super.onSaveInstanceState(outState);
     }
 
     /**
@@ -104,10 +118,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             case R.id.menu_most_popular:
                 url = NetworkUtils.buildURL(R.id.menu_most_popular);
                 new FetchMoviesTask().execute(url);
+                mMoviesRecyclerView.scrollToPosition(0);
                 return true;
             case R.id.menu_top_rated:
                 url = NetworkUtils.buildURL(R.id.menu_top_rated);
                 new FetchMoviesTask().execute(url);
+                mMoviesRecyclerView.scrollToPosition(0);
                 return true;
         }
 
