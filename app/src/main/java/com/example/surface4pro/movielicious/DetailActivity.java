@@ -1,8 +1,10 @@
 package com.example.surface4pro.movielicious;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Explode;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -30,6 +32,11 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+        // set an exit transition
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setEnterTransition(new Explode());
+        }
 
         mPosterImageView = findViewById(R.id.iv_poster);
         mTitelTextView = findViewById(R.id.tv_title);
@@ -62,8 +69,14 @@ public class DetailActivity extends AppCompatActivity {
             mGenreTextView.setText(String.valueOf(mMovies.get(id).getGenreIds()[0]));
             mDescriptionTextView.setText(mMovies.get(id).getDescription());
 
+            android.support.v7.app.ActionBar ab = getSupportActionBar();
+            if (ab != null) {
+                ab.setTitle(mMovies.get(id).getTitle());
+            }
+
             Toast.makeText(this, String.valueOf(mMovies.get(id).getVoteAverage()), Toast.LENGTH_SHORT).show();
         }
 
     }
+
 }

@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         bundle.putInt("clickedMovie", layoutPosition);
         startDetailActivityIntent.putExtras(bundle);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // set an exit transition
+            //getWindow().setExitTransition(new Explode());
             startActivity(startDetailActivityIntent, ActivityOptions.makeSceneTransitionAnimation(this, v.findViewById(R.id.iv_movie_poster), "transition_poster").toBundle());
         }
     }

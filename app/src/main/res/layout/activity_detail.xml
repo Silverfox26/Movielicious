@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
     tools:context=".DetailActivity">
 
     <android.support.constraint.ConstraintLayout
@@ -43,7 +42,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginStart="16dp"
             android:text="Deadpool 2"
-            android:textColor="@android:color/white"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/rb_rating"
@@ -59,8 +58,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:numStars="5"
-            android:progressBackgroundTint="#FFFFFF"
-            android:progressTint="#FFFFFF"
+
             android:rating="3.5"
             android:stepSize="0.5"
             app:layout_constraintEnd_toStartOf="@+id/tv_votes"
@@ -74,7 +72,6 @@
             android:layout_marginRight="16dp"
             android:layout_marginTop="8dp"
             android:text="(451)"
-            android:textColor="@android:color/white"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
@@ -104,7 +101,6 @@
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:text="(2018)"
-            android:textColor="@android:color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
@@ -118,7 +114,6 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus dictum molestie elit, in pellentesque purus auctor ac. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Quisque interdum elementum nisi non vestibulum. Morbi ut nulla arcu. Vestibulum vitae sapien est. Morbi porta tortor sed enim eleifend consectetur. Ut vestibulum finibus velit, ut mollis tellus interdum a.  Morbi fermentum, arcu eget aliquet sodales, est nisi tempus libero, eu tempus quam arcu eget sem. Curabitur quis dictum quam. Etiam quis scelerisque ipsum, eu finibus elit. Fusce et semper eros, sit amet congue libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque auctor finibus luctus. Vestibulum tempus dui eget erat commodo mollis. Cras porttitor semper mauris ac interdum.TextView"
-            android:textColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_genre" />
