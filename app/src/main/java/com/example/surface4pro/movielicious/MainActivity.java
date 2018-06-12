@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.surface4pro.movielicious.model.Movie;
 import com.example.surface4pro.movielicious.utilities.MovieDbJsonUtils;
@@ -30,28 +32,18 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private MovieAdapter mMovieAdapter;
     private RecyclerView mMoviesRecyclerView;
 
-//    @Override
-//    public void onConfigurationChanged(Configuration config) {
-//        super.onConfigurationChanged(config);
-//        // Check for the rotation
-//        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            Toast.makeText(this, "LANDSCAPE", Toast.LENGTH_SHORT).show();
-//            mMoviesRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-//            mMoviesRecyclerView.setAdapter(mMovieAdapter);
-//        } else if (config.orientation == Configuration.ORIENTATION_PORTRAIT){
-//            Toast.makeText(this, "PORTRAIT", Toast.LENGTH_SHORT).show();
-//            mMoviesRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-//            mMoviesRecyclerView.setAdapter(mMovieAdapter);
-//        }
-//    }
+    private ProgressBar mLoadingIndicator;
+    private TextView mErrorMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // TODO -
+        // TODO - Add Documentation
         mMoviesRecyclerView = findViewById(R.id.rv_movies);
+        mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
+        mErrorMessage = findViewById(R.id.tv_error_message);
 
         GridLayoutManager layoutManager = null;
         int value = this.getResources().getConfiguration().orientation;
@@ -76,6 +68,16 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 mMovieAdapter.setMovieData(movies);
             }
         }
+    }
+
+    public void showErrorMessage() {
+        mMoviesRecyclerView.setVisibility(View.INVISIBLE);
+        mErrorMessage.setVisibility(View.VISIBLE);
+    }
+
+    public void showMovieData() {
+        mMoviesRecyclerView.setVisibility(View.VISIBLE);
+        mErrorMessage.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -176,6 +178,18 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
 
     public class FetchMoviesTask extends AsyncTask<URL, Void, ArrayList<Movie>> {
+        /**
+         * Runs on the UI thread before {@link #doInBackground}.
+         *
+         * @see #onPostExecute
+         * @see #doInBackground
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showMovieData();
+            mLoadingIndicator.setVisibility(View.VISIBLE);
+        }
 
         @Override
         protected ArrayList<Movie> doInBackground(URL... urls) {
@@ -189,17 +203,18 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             }
 
             movies = MovieDbJsonUtils.getMovieDataFromJson(movieQueryResults);
-            if (movies != null) {
-                Log.d("MObject", movies.get(1).getOriginalTitle());
-            }
 
             return movies;
         }
 
         @Override
         protected void onPostExecute(ArrayList<Movie> movies) {
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (movies != null) {
+                showMovieData();
                 mMovieAdapter.setMovieData(movies);
+            } else {
+                showErrorMessage();
             }
         }
     }
