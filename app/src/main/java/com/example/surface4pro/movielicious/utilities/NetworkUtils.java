@@ -1,7 +1,8 @@
 package com.example.surface4pro.movielicious.utilities;
 
 import android.net.Uri;
-import android.util.Log;
+
+import com.example.surface4pro.movielicious.R;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,15 +24,27 @@ public final class NetworkUtils {
     final static String PARAM_QUERY = "api_key";
     final static String API_KEY = "YOUR_API_KEY";
 
-    public static URL buildURL() {
+    public static URL buildURL(int menuSelection) {
         /* Building the API request URL */
 
-        Uri builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
-                .appendPath(PATH_MOVIES)
-                .appendPath(PATH_SORT_POPULAR)
-                .appendQueryParameter(PARAM_QUERY, API_KEY)
-                .build();
-        Log.d("URI: ", builtUri.toString());
+        Uri builtUri = null;
+
+        switch (menuSelection) {
+            case R.id.menu_most_popular:
+                builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
+                        .appendPath(PATH_MOVIES)
+                        .appendPath(PATH_SORT_POPULAR)
+                        .appendQueryParameter(PARAM_QUERY, API_KEY)
+                        .build();
+                break;
+            case R.id.menu_top_rated:
+                builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
+                        .appendPath(PATH_MOVIES)
+                        .appendPath(PATH_SORT_TOP_RATED)
+                        .appendQueryParameter(PARAM_QUERY, API_KEY)
+                        .build();
+                break;
+        }
 
         URL url = null;
         try {
