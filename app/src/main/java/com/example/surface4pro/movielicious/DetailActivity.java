@@ -66,7 +66,80 @@ public class DetailActivity extends AppCompatActivity {
             mYearTextVies.setText(mMovies.get(id).getReleaseDate().substring(0, 4));
             mRatingRatingBar.setRating(mMovies.get(id).getVoteAverage() / 2f);
             mVotesTextView.setText("(" + String.valueOf(mMovies.get(id).getVoteCount()) + ")");
-            mGenreTextView.setText(String.valueOf(mMovies.get(id).getGenreIds()[0]));
+
+
+            StringBuilder genres = new StringBuilder();
+            int[] genreArray = mMovies.get(id).getGenreIds();
+
+            int index = 0;
+            for (int genre : genreArray) {
+                switch (genre) {
+                    case 28:
+                        genres.append("Action");
+                        break;
+                    case 12:
+                        genres.append("Adventure");
+                        break;
+                    case 16:
+                        genres.append("Animation");
+                        break;
+                    case 35:
+                        genres.append("Comedy");
+                        break;
+                    case 80:
+                        genres.append("Crime");
+                        break;
+                    case 99:
+                        genres.append("Documentary");
+                        break;
+                    case 18:
+                        genres.append("Drama");
+                        break;
+                    case 10751:
+                        genres.append("Family");
+                        break;
+                    case 14:
+                        genres.append("Fantasy");
+                        break;
+                    case 36:
+                        genres.append("History");
+                        break;
+                    case 27:
+                        genres.append("Horror");
+                        break;
+                    case 10402:
+                        genres.append("Music");
+                        break;
+                    case 9648:
+                        genres.append("Mystery");
+                        break;
+                    case 10749:
+                        genres.append("Romance");
+                        break;
+                    case 878:
+                        genres.append("Science Fiction");
+                        break;
+                    case 10770:
+                        genres.append("TV Movie");
+                        break;
+                    case 53:
+                        genres.append("Thriller");
+                        break;
+                    case 10752:
+                        genres.append("War");
+                        break;
+                    case 37:
+                        genres.append("Western");
+                        break;
+                }
+                if (index < genreArray.length - 1) {
+                    genres.append(", ");
+                }
+                index++;
+            }
+
+            mGenreTextView.setText(genres.toString());
+
             mDescriptionTextView.setText(mMovies.get(id).getDescription());
 
             android.support.v7.app.ActionBar ab = getSupportActionBar();
@@ -75,6 +148,7 @@ public class DetailActivity extends AppCompatActivity {
             }
 
             Toast.makeText(this, String.valueOf(mMovies.get(id).getVoteAverage()), Toast.LENGTH_SHORT).show();
+
         }
 
     }

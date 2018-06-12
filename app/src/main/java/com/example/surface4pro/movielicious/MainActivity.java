@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // TODO - Save Rotation Scroll Position. Convert Genre Numbers to Strings representations.
+        // TODO - Create different layout for landscape
         mMoviesRecyclerView = findViewById(R.id.rv_movies);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         mMoviesRecyclerView.setLayoutManager(layoutManager);
