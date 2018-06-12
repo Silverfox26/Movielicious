@@ -1,5 +1,6 @@
 package com.example.surface4pro.movielicious;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -8,17 +9,13 @@ import android.transition.Explode;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.surface4pro.movielicious.model.Movie;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-
 public class DetailActivity extends AppCompatActivity {
 
     private Movie mMovie;
-    private ArrayList<Movie> mMovies;
 
     private ImageView mPosterImageView;
     private TextView mTitelTextView;
@@ -46,15 +43,13 @@ public class DetailActivity extends AppCompatActivity {
         mGenreTextView = findViewById(R.id.tv_genre);
         mDescriptionTextView = findViewById(R.id.tv_description);
 
-        Bundle bundleObject = getIntent().getExtras();
-
-        if (bundleObject != null && bundleObject.containsKey("movies") && bundleObject.containsKey("clickedMovie")) {
-            mMovies = bundleObject.getParcelableArrayList("movies");
-            int id = bundleObject.getInt("clickedMovie");
+        Intent intent = getIntent();
+        if (intent.hasExtra("movie")) {
+            mMovie = intent.getParcelableExtra("movie");
 
             Uri builtUri = Uri.parse("http://image.tmdb.org/t/p/").buildUpon()
                     .appendPath("w185")
-                    .appendEncodedPath(mMovies.get(id).getPosterPath())
+                    .appendEncodedPath(mMovie.getPosterPath())
                     .build();
 
             String url = null;
@@ -62,14 +57,14 @@ public class DetailActivity extends AppCompatActivity {
 
             Picasso.get().load(url).into(mPosterImageView);
 
-            mTitelTextView.setText(mMovies.get(id).getTitle());
-            mYearTextVies.setText(mMovies.get(id).getReleaseDate().substring(0, 4));
-            mRatingRatingBar.setRating(mMovies.get(id).getVoteAverage() / 2f);
-            mVotesTextView.setText("(" + String.valueOf(mMovies.get(id).getVoteCount()) + ")");
+            mTitelTextView.setText(mMovie.getTitle());
+            mYearTextVies.setText(mMovie.getReleaseDate().substring(0, 4));
+            mRatingRatingBar.setRating(mMovie.getVoteAverage() / 2f);
+            mVotesTextView.setText("(" + String.valueOf(mMovie.getVoteCount()) + ")");
 
 
             StringBuilder genres = new StringBuilder();
-            int[] genreArray = mMovies.get(id).getGenreIds();
+            int[] genreArray = mMovie.getGenreIds();
 
             int index = 0;
             for (int genre : genreArray) {
@@ -140,14 +135,12 @@ public class DetailActivity extends AppCompatActivity {
 
             mGenreTextView.setText(genres.toString());
 
-            mDescriptionTextView.setText(mMovies.get(id).getDescription());
+            mDescriptionTextView.setText(mMovie.getDescription());
 
             android.support.v7.app.ActionBar ab = getSupportActionBar();
             if (ab != null) {
-                ab.setTitle(mMovies.get(id).getTitle());
+                ab.setTitle(mMovie.getTitle());
             }
-
-            Toast.makeText(this, String.valueOf(mMovies.get(id).getVoteAverage()), Toast.LENGTH_SHORT).show();
 
         }
 

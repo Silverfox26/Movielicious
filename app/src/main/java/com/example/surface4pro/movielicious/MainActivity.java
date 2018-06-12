@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -158,20 +157,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     @Override
     public void onClick(View v, String clickedMovie, int layoutPosition) {
-        Log.d("CLICK", clickedMovie);
-
         Context context = this;
         Class destinationClass = DetailActivity.class;
-
-
         Intent startDetailActivityIntent = new Intent(context, destinationClass);
-        Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("movies", movies);
-        bundle.putInt("clickedMovie", layoutPosition);
-        startDetailActivityIntent.putExtras(bundle);
+        startDetailActivityIntent.putExtra("movie", movies.get(layoutPosition));
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // set an exit transition
-            //getWindow().setExitTransition(new Explode());
             startActivity(startDetailActivityIntent, ActivityOptions.makeSceneTransitionAnimation(this, v.findViewById(R.id.iv_movie_poster), "transition_poster").toBundle());
         }
     }
