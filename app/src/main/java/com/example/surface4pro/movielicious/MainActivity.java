@@ -1,13 +1,16 @@
 package com.example.surface4pro.movielicious;
 
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 
 import com.example.surface4pro.movielicious.model.Movie;
 import com.example.surface4pro.movielicious.utilities.MovieDbJsonUtils;
@@ -29,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // TODO - Array with Movies objects is created. Next -> Using a Grid or RecyclerView to populate the MainActivity with the cover images.
+        // TODO - Create Detail Activity and fill in the data. Save Rotation Scroll Position.
         mMoviesRecyclerView = findViewById(R.id.rv_movies);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         mMoviesRecyclerView.setLayoutManager(layoutManager);
@@ -42,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     }
 
     @Override
-    public void onClick(String clickedMovie) {
+    public void onClick(View v, String clickedMovie, int layoutPosition) {
         Log.d("CLICK", clickedMovie);
 
         Context context = this;
@@ -52,8 +55,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         Intent startDetailActivityIntent = new Intent(context, destinationClass);
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList("movies", movies);
+        bundle.putInt("clickedMovie", layoutPosition);
         startDetailActivityIntent.putExtras(bundle);
-        startActivity(startDetailActivityIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            startActivity(startDetailActivityIntent, ActivityOptions.makeSceneTransitionAnimation(this, v.findViewById(R.id.iv_movie_poster), "transition_poster").toBundle());
+        }
     }
 
 
