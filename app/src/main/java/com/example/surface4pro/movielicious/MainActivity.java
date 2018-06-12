@@ -3,6 +3,7 @@ package com.example.surface4pro.movielicious;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,14 +30,37 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private MovieAdapter mMovieAdapter;
     private RecyclerView mMoviesRecyclerView;
 
+//    @Override
+//    public void onConfigurationChanged(Configuration config) {
+//        super.onConfigurationChanged(config);
+//        // Check for the rotation
+//        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            Toast.makeText(this, "LANDSCAPE", Toast.LENGTH_SHORT).show();
+//            mMoviesRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+//            mMoviesRecyclerView.setAdapter(mMovieAdapter);
+//        } else if (config.orientation == Configuration.ORIENTATION_PORTRAIT){
+//            Toast.makeText(this, "PORTRAIT", Toast.LENGTH_SHORT).show();
+//            mMoviesRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+//            mMoviesRecyclerView.setAdapter(mMovieAdapter);
+//        }
+//    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // TODO - Create different layout for landscape
+        // TODO -
         mMoviesRecyclerView = findViewById(R.id.rv_movies);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+
+        GridLayoutManager layoutManager = null;
+        int value = this.getResources().getConfiguration().orientation;
+
+        if (value == Configuration.ORIENTATION_PORTRAIT) {
+            layoutManager = new GridLayoutManager(this, 2);
+        } else {
+            layoutManager = new GridLayoutManager(this, 4);
+        }
         mMoviesRecyclerView.setLayoutManager(layoutManager);
         mMoviesRecyclerView.setHasFixedSize(true);
         mMovieAdapter = new MovieAdapter(this, movies);
