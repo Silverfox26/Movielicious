@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -144,12 +143,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         Intent startDetailActivityIntent = new Intent(context, destinationClass);
         startDetailActivityIntent.putExtra(getString(R.string.extra_movie), movies.get(layoutPosition));
 
-        // Use SceneTransitionAnimation if SDK Version is high enough
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            startActivity(startDetailActivityIntent, ActivityOptions.makeSceneTransitionAnimation(this, v.findViewById(R.id.iv_movie_poster), getString(R.string.transition_poster)).toBundle());
-        } else {
-            startActivity(startDetailActivityIntent);
-        }
+        // Use SceneTransitionAnimation to start DetailActivity
+        startActivity(startDetailActivityIntent, ActivityOptions.makeSceneTransitionAnimation(this, v.findViewById(R.id.iv_movie_poster), getString(R.string.transition_poster)).toBundle());
+
     }
 
     private static class FetchMoviesTask extends AsyncTask<URL, Void, ArrayList<Movie>> {

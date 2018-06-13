@@ -5,7 +5,6 @@
 package com.example.surface4pro.movielicious;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.Explode;
@@ -24,10 +23,8 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        // Set an exit transition
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setEnterTransition(new Explode());
-        }
+        // Set exit transition
+        getWindow().setEnterTransition(new Explode());
 
         // Get the intent, check its content, and populate the UI with its data
         Intent intent = getIntent();
