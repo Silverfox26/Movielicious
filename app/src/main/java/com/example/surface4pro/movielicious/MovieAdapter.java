@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018. Daniel Penz
+ */
+
 package com.example.surface4pro.movielicious;
 
 import android.content.Context;
@@ -29,7 +33,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     /**
      * Creates a MovieAdapter.
      */
-    public MovieAdapter(MovieAdapterOnClickHandler clickHandler, ArrayList<Movie> movies) {
+    MovieAdapter(MovieAdapterOnClickHandler clickHandler, ArrayList<Movie> movies) {
         this.mClickHandler = clickHandler;
         this.mMovieData = movies;
     }
@@ -55,7 +59,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
         // Create the image URL and display it using Picasso
         String url = NetworkUtils.buildImageUrl(movieImagePath);
-        Picasso.get().load(url).into(holder.mMovieImageView);
+        Picasso.get().load(url).placeholder(R.drawable.no_poster).into(holder.mMovieImageView);
     }
 
     /**
@@ -73,9 +77,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         Context context = parent.getContext();
         int layoutIdForListItem = R.layout.movie_list_item;
         LayoutInflater inflater = LayoutInflater.from(context);
-        boolean shouldAttachToParentImmediately = false;
 
-        View view = inflater.inflate(layoutIdForListItem, parent, shouldAttachToParentImmediately);
+        View view = inflater.inflate(layoutIdForListItem, parent, false);
         return new MovieViewHolder(view);
     }
 
@@ -83,10 +86,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
      * Cache of the children views for a forecast list item.
      */
     public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public final ImageView mMovieImageView;
-        public final TextView mMovieTitle;
+        final ImageView mMovieImageView;
+        final TextView mMovieTitle;
 
-        public MovieViewHolder(View itemView) {
+        MovieViewHolder(View itemView) {
             super(itemView);
             mMovieImageView = itemView.findViewById(R.id.iv_movie_poster);
             mMovieTitle = itemView.findViewById(R.id.tv_movie_title);

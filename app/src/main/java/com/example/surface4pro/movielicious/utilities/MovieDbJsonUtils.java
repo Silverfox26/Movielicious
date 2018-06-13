@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018. Daniel Penz
+ */
+
 package com.example.surface4pro.movielicious.utilities;
 
 import com.example.surface4pro.movielicious.model.Movie;
@@ -17,37 +21,55 @@ public final class MovieDbJsonUtils {
      * @return an ArrayList consisting of Movie objects parsed from the movieJsonString
      */
     public static ArrayList<Movie> getMovieDataFromJson(String movieJsonString) {
-        ArrayList<Movie> movieList = new ArrayList<Movie>();
+        ArrayList<Movie> movieList = new ArrayList<>();
 
-        JSONObject movies = null;
+        // String Constants for parsing the Json String
+        final String RESULTS = "results";
+        final String ID = "id";
+        final String TITLE = "title";
+        final String ORIGINAL_TITLE = "original_title";
+        final String VOTE_COUNT = "vote_count";
+        final String VOTE_AVERAGE = "vote_average";
+        final String RELEASE_DATE = "release_date";
+        final String OVERVIEW = "overview";
+        final String POPULARITY = "popularity";
+        final String POSTER_PATH = "poster_path";
+        final String BACKDROP_PATH = "backdrop_path";
+        final String VIDEO = "video";
+        final String ORIGINAL_LANGUAGE = "original_language";
+        final String GENRE_IDS = "genre_ids";
+        final String ADULT = "adult";
+
+
+        JSONObject movies;
         try {
             movies = new JSONObject(movieJsonString);
 
-            JSONArray results = movies.getJSONArray("results");
+            JSONArray results = movies.getJSONArray(RESULTS);
 
             for (int i = 0; i < results.length(); i++) {
                 JSONObject movie = results.getJSONObject(i);
 
-                int id = movie.getInt("id");
-                String title = movie.getString("title");
-                String originalTitle = movie.getString("original_title");
-                int voteCount = movie.getInt("vote_count");
-                int voteAverage = movie.getInt("vote_average");
-                String releaseDate = movie.getString("release_date");
-                String description = movie.getString("overview");
-                int popularity = movie.getInt("popularity");
-                String posterPath = movie.getString("poster_path");
-                String backdropPath = movie.getString("backdrop_path");
-                boolean video = movie.getBoolean("video");
-                String originalLanguage = movie.getString("original_language");
+                int id = movie.getInt(ID);
+                String title = movie.getString(TITLE);
+                String originalTitle = movie.getString(ORIGINAL_TITLE);
+                int voteCount = movie.getInt(VOTE_COUNT);
+                int voteAverage = movie.getInt(VOTE_AVERAGE);
+                String releaseDate = movie.getString(RELEASE_DATE);
+                String description = movie.getString(OVERVIEW);
+                int popularity = movie.getInt(POPULARITY);
+                String posterPath = movie.getString(POSTER_PATH);
+                String backdropPath = movie.getString(BACKDROP_PATH);
+                boolean video = movie.getBoolean(VIDEO);
+                String originalLanguage = movie.getString(ORIGINAL_LANGUAGE);
 
-                JSONArray genreIdsArray = movie.getJSONArray("genre_ids");
+                JSONArray genreIdsArray = movie.getJSONArray(GENRE_IDS);
                 int[] genreIds = new int[genreIdsArray.length()];
 
                 for (int j = 0; j < genreIdsArray.length(); j++) {
                     genreIds[j] = genreIdsArray.getInt(j);
                 }
-                boolean onlyForAdults = movie.getBoolean("adult");
+                boolean onlyForAdults = movie.getBoolean(ADULT);
 
                 movieList.add(i, new Movie(
                         id,

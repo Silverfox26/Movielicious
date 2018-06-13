@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018. Daniel Penz
+ */
+
 package com.example.surface4pro.movielicious.utilities;
 
 import android.net.Uri;
@@ -17,12 +21,15 @@ import java.util.Scanner;
 public final class NetworkUtils {
 
     // Defining URL constants
-    final static String MOVIEDB_BASE_URL = "http://api.themoviedb.org/3";
-    final static String PATH_MOVIES = "movie";
-    final static String PATH_SORT_POPULAR = "popular";
-    final static String PATH_SORT_TOP_RATED = "top_rated";
-    final static String PARAM_QUERY = "api_key";
-    final static String API_KEY = "YOUR_API_KEY";
+    private final static String MOVIEDB_BASE_URL = "http://api.themoviedb.org/3";
+    private final static String PATH_MOVIES = "movie";
+    private final static String PATH_SORT_POPULAR = "popular";
+    private final static String PATH_SORT_TOP_RATED = "top_rated";
+    private final static String PARAM_QUERY = "api_key";
+    private final static String API_KEY = "YOUR_API_KEY";
+
+    private final static String MOVIEDB_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
+    private final static String PATH_IMAGE_WIDTH = "w342";
 
     /**
      * Builds the MovieDatabase API request URL based in the passe in sort parameter.
@@ -63,6 +70,23 @@ public final class NetworkUtils {
     }
 
     /**
+     * Builds the movie poster URL.
+     *
+     * @param movieImagePath the path to the movie poster
+     * @return build mage URL
+     */
+    public static String buildImageUrl(String movieImagePath) {
+        Uri builtUri = Uri.parse(MOVIEDB_IMAGE_BASE_URL).buildUpon()
+                .appendPath(PATH_IMAGE_WIDTH)
+                .appendEncodedPath(movieImagePath)
+                .build();
+
+        return builtUri.toString();
+    }
+
+    /**
+     * Method taken from the Udacity Android Developer Nanodegree Sunshine Project.
+     * <p>
      * Method returns the entire result from the HTTP response.
      *
      * @param url The URL to fetch the HTTP response from
@@ -86,21 +110,5 @@ public final class NetworkUtils {
         } finally {
             urlConnection.disconnect();
         }
-    }
-
-    /**
-     * Builds the movie poster URL.
-     *
-     * @param movieImagePath the path to the movie poster
-     * @return build mage URL
-     */
-    public static String buildImageUrl(String movieImagePath) {
-        Uri builtUri = Uri.parse("http://image.tmdb.org/t/p/").buildUpon()
-                .appendPath("w185")
-                .appendEncodedPath(movieImagePath)
-                .build();
-
-        String url = null;
-        return url = builtUri.toString();
     }
 }

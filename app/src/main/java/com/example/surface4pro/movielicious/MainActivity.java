@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018. Daniel Penz
+ */
+
 package com.example.surface4pro.movielicious;
 
 import android.app.ActivityOptions;
@@ -21,6 +25,7 @@ import com.example.surface4pro.movielicious.utilities.MovieDbJsonUtils;
 import com.example.surface4pro.movielicious.utilities.NetworkUtils;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -40,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // TODO - Add/finish Documentation
         // Initializing the View variables
         mMoviesRecyclerView = findViewById(R.id.rv_movies);
         mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
@@ -48,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         // Setting the span count for the GridLayoutManager based on the device's orientation
         int value = this.getResources().getConfiguration().orientation;
-        GridLayoutManager layoutManager = null;
+        GridLayoutManager layoutManager;
         if (value == Configuration.ORIENTATION_PORTRAIT) {
             layoutManager = new GridLayoutManager(this, 2);
         } else {
@@ -63,10 +67,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         // Fetching the movie data from the Internet
         // or using the local data in savedInstanceState, if available
-        if (savedInstanceState == null || !savedInstanceState.containsKey("movies")) {
+        if (savedInstanceState == null || !savedInstanceState.containsKey(getString(R.string.saved_instance_movies))) {
             loadMovieData(R.id.menu_most_popular);
         } else {
-            movies = savedInstanceState.getParcelableArrayList("movies");
+            movies = savedInstanceState.getParcelableArrayList(getString(R.string.saved_instance_movies));
             if (movies != null) {
                 mMovieAdapter.setMovieData(movies);
             }
@@ -98,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private void loadMovieData(int sortParam) {
         showMovieData();
         url = NetworkUtils.buildURL(sortParam);
-        new FetchMoviesTask().execute(url);
+        new FetchMoviesTask(this).execute(url);
     }
 
     /**
@@ -106,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
      */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("movies", movies);
+        outState.putParcelableArrayList(getString(R.string.saved_instance_movies), movies);
         super.onSaveInstanceState(outState);
     }
 
@@ -138,29 +142,44 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         Context context = this;
         Class destinationClass = DetailActivity.class;
         Intent startDetailActivityIntent = new Intent(context, destinationClass);
-        startDetailActivityIntent.putExtra("movie", movies.get(layoutPosition));
+        startDetailActivityIntent.putExtra(getString(R.string.extra_movie), movies.get(layoutPosition));
 
         // Use SceneTransitionAnimation if SDK Version is high enough
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            startActivity(startDetailActivityIntent, ActivityOptions.makeSceneTransitionAnimation(this, v.findViewById(R.id.iv_movie_poster), "transition_poster").toBundle());
+            startActivity(startDetailActivityIntent, ActivityOptions.makeSceneTransitionAnimation(this, v.findViewById(R.id.iv_movie_poster), getString(R.string.transition_poster)).toBundle());
         } else {
             startActivity(startDetailActivityIntent);
         }
     }
 
-    public class FetchMoviesTask extends AsyncTask<URL, Void, ArrayList<Movie>> {
+    private static class FetchMoviesTask extends AsyncTask<URL, Void, ArrayList<Movie>> {
+
+        private WeakReference<MainActivity> activityReference;
+
+        // only retain a weak reference to the activity
+        FetchMoviesTask(MainActivity context) {
+            activityReference = new WeakReference<>(context);
+        }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            showMovieData();
-            mLoadingIndicator.setVisibility(View.VISIBLE);
+            // get a reference to the activity if it is still there
+            MainActivity activity = activityReference.get();
+            if (activity == null || activity.isFinishing()) return;
+
+            activity.showMovieData();
+            activity.mLoadingIndicator.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected ArrayList<Movie> doInBackground(URL... urls) {
+            // get a reference to the activity if it is still there
+            MainActivity activity = activityReference.get();
+            if (activity == null || activity.isFinishing()) return null;
+
             URL queryUrl = urls[0];
-            String movieQueryResults = null;
+            String movieQueryResults;
             try {
                 movieQueryResults = NetworkUtils.getResponseFromHttpUrl(queryUrl);
             } catch (IOException e) {
@@ -168,20 +187,24 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 return null;
             }
 
-            movies = MovieDbJsonUtils.getMovieDataFromJson(movieQueryResults);
+            activity.movies = MovieDbJsonUtils.getMovieDataFromJson(movieQueryResults);
 
-            return movies;
+            return activity.movies;
         }
 
         @Override
         protected void onPostExecute(ArrayList<Movie> movies) {
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
+            // get a reference to the activity if it is still there
+            MainActivity activity = activityReference.get();
+            if (activity == null || activity.isFinishing()) return;
+
+            activity.mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (movies != null) {
-                showMovieData();
-                mMovieAdapter.setMovieData(movies);
-                mMoviesRecyclerView.scrollToPosition(0);
+                activity.showMovieData();
+                activity.mMovieAdapter.setMovieData(movies);
+                activity.mMoviesRecyclerView.scrollToPosition(0);
             } else {
-                showErrorMessage();
+                activity.showErrorMessage();
             }
         }
     }

@@ -1,8 +1,15 @@
+/*
+ * Copyright (c) 2018. Daniel Penz
+ */
+
 package com.example.surface4pro.movielicious.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * Class for custom Movie objects.
+ */
 public class Movie implements Parcelable {
 
     private int id;
@@ -20,6 +27,24 @@ public class Movie implements Parcelable {
     private int[] genreIds;
     private boolean onlyForAdults;
 
+    /**
+     * Movie constructor.
+     *
+     * @param id               Id of the movie.
+     * @param title            Title of the movie.
+     * @param originalTitle    Original Title of the movie.
+     * @param voteCount        Number of votes the movie received.
+     * @param voteAverage      Average rating the movie got.
+     * @param releaseDate      Release date of the movie.
+     * @param description      Description of the movie.
+     * @param popularity       Popularity rank of the movie.
+     * @param posterPath       Path to the poster image.
+     * @param backdropPath     Path to the backdrop image.
+     * @param video            Has video?
+     * @param originalLanguage Original language of the movie.
+     * @param genreIds         Array of int ids refereing to the genres.
+     * @param onlyForAdults    Is only for adults?
+     */
     public Movie(int id, String title, String originalTitle, int voteCount, int voteAverage, String releaseDate, String description, int popularity, String posterPath, String backdropPath, boolean video, String originalLanguage, int[] genreIds, boolean onlyForAdults) {
         this.id = id;
         this.title = title;
@@ -49,7 +74,7 @@ public class Movie implements Parcelable {
         }
     };
 
-    protected Movie(Parcel in) {
+    private Movie(Parcel in) {
         id = in.readInt();
         title = in.readString();
         originalTitle = in.readString();

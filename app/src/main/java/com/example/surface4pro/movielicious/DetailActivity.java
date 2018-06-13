@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018. Daniel Penz
+ */
+
 package com.example.surface4pro.movielicious;
 
 import android.content.Intent;
@@ -15,17 +19,6 @@ import com.squareup.picasso.Picasso;
 
 public class DetailActivity extends AppCompatActivity {
 
-    // Member variable declarations
-    private Movie mMovie;
-
-    private ImageView mPosterImageView;
-    private TextView mTitelTextView;
-    private TextView mYearTextVies;
-    private RatingBar mRatingRatingBar;
-    private TextView mVotesTextView;
-    private TextView mGenreTextView;
-    private TextView mDescriptionTextView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,110 +29,118 @@ public class DetailActivity extends AppCompatActivity {
             getWindow().setEnterTransition(new Explode());
         }
 
-        // Initialize the View variables
-        mPosterImageView = findViewById(R.id.iv_poster);
-        mTitelTextView = findViewById(R.id.tv_title);
-        mYearTextVies = findViewById(R.id.tv_year);
-        mRatingRatingBar = findViewById(R.id.rb_rating);
-        mVotesTextView = findViewById(R.id.tv_votes);
-        mGenreTextView = findViewById(R.id.tv_genre);
-        mDescriptionTextView = findViewById(R.id.tv_description);
-
-        // Get the intent and check its content
+        // Get the intent, check its content, and populate the UI with its data
         Intent intent = getIntent();
-        if (intent.hasExtra("movie")) {
-            mMovie = intent.getParcelableExtra("movie");
-
-            // Create the image URL and display it using Picasso
-            String url = NetworkUtils.buildImageUrl(mMovie.getPosterPath());
-            Picasso.get().load(url).into(mPosterImageView);
-
-            // Set the movie detail information to the different views
-            mTitelTextView.setText(mMovie.getTitle());
-            mYearTextVies.setText(mMovie.getReleaseDate().substring(0, 4));
-            mRatingRatingBar.setRating(mMovie.getVoteAverage() / 2f);
-            mVotesTextView.setText("(" + String.valueOf(mMovie.getVoteCount()) + ")");
-            mDescriptionTextView.setText(mMovie.getDescription());
-
-            // Convert the genre id's to their corresponding names and
-            // concatenate them using a StringBuilder
-            StringBuilder genres = new StringBuilder();
-            int[] genreArray = mMovie.getGenreIds();
-
-            int index = 0;
-            for (int genre : genreArray) {
-                switch (genre) {
-                    case 28:
-                        genres.append("Action");
-                        break;
-                    case 12:
-                        genres.append("Adventure");
-                        break;
-                    case 16:
-                        genres.append("Animation");
-                        break;
-                    case 35:
-                        genres.append("Comedy");
-                        break;
-                    case 80:
-                        genres.append("Crime");
-                        break;
-                    case 99:
-                        genres.append("Documentary");
-                        break;
-                    case 18:
-                        genres.append("Drama");
-                        break;
-                    case 10751:
-                        genres.append("Family");
-                        break;
-                    case 14:
-                        genres.append("Fantasy");
-                        break;
-                    case 36:
-                        genres.append("History");
-                        break;
-                    case 27:
-                        genres.append("Horror");
-                        break;
-                    case 10402:
-                        genres.append("Music");
-                        break;
-                    case 9648:
-                        genres.append("Mystery");
-                        break;
-                    case 10749:
-                        genres.append("Romance");
-                        break;
-                    case 878:
-                        genres.append("Science Fiction");
-                        break;
-                    case 10770:
-                        genres.append("TV Movie");
-                        break;
-                    case 53:
-                        genres.append("Thriller");
-                        break;
-                    case 10752:
-                        genres.append("War");
-                        break;
-                    case 37:
-                        genres.append("Western");
-                        break;
-                }
-                if (index < genreArray.length - 1) {
-                    genres.append(", ");
-                }
-                index++;
-            }
-
-            mGenreTextView.setText(genres.toString());
-
-            // Set the ActionBar Title to the movie's title
-            android.support.v7.app.ActionBar ab = getSupportActionBar();
-            if (ab != null) {
-                ab.setTitle(mMovie.getTitle());
-            }
+        if (intent.hasExtra(getString(R.string.extra_movie))) {
+            Movie movie = intent.getParcelableExtra(getString(R.string.extra_movie));
+            populateUI(movie);
         }
+    }
+
+    /**
+     * Populates the UI with the data from the passed in Movie object.
+     *
+     * @param movie Movie object containing the movie data.
+     */
+    private void populateUI(Movie movie) {
+
+        // Declare and initialize View variables
+        ImageView mPosterImageView = findViewById(R.id.iv_poster);
+        TextView mTitleTextView = findViewById(R.id.tv_title);
+        TextView mYearTextView = findViewById(R.id.tv_year);
+        RatingBar mRatingRatingBar = findViewById(R.id.rb_rating);
+        TextView mVotesTextView = findViewById(R.id.tv_votes);
+        TextView mGenreTextView = findViewById(R.id.tv_genre);
+        TextView mDescriptionTextView = findViewById(R.id.tv_description);
+
+        // Set the ActionBar Title to the movie's title
+        android.support.v7.app.ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setTitle(movie.getTitle());
+        }
+
+        // Create the image URL and display it using Picasso
+        String url = NetworkUtils.buildImageUrl(movie.getPosterPath());
+        Picasso.get().load(url).placeholder(R.drawable.no_poster).into(mPosterImageView);
+
+        // Set the movie detail information to the different views
+        mTitleTextView.setText(movie.getTitle());
+        mYearTextView.setText(movie.getReleaseDate().substring(0, 4));
+        mRatingRatingBar.setRating(movie.getVoteAverage() / 2f);
+        mVotesTextView.setText(getResources().getString(R.string.number_of_votes, String.valueOf(movie.getVoteCount())));
+        mDescriptionTextView.setText(movie.getDescription());
+
+        // Convert the genre id's to their corresponding names and
+        // concatenate them using a StringBuilder
+        StringBuilder genres = new StringBuilder();
+        int[] genreArray = movie.getGenreIds();
+
+        int index = 0;
+        for (int genre : genreArray) {
+            switch (genre) {
+                case 28:
+                    genres.append(getString(R.string.genre_action));
+                    break;
+                case 12:
+                    genres.append(getString(R.string.genre_adventure));
+                    break;
+                case 16:
+                    genres.append(getString(R.string.genre_animation));
+                    break;
+                case 35:
+                    genres.append(getString(R.string.genre_comedy));
+                    break;
+                case 80:
+                    genres.append(getString(R.string.genre_crime));
+                    break;
+                case 99:
+                    genres.append(getString(R.string.genre_documentary));
+                    break;
+                case 18:
+                    genres.append(getString(R.string.genre_drama));
+                    break;
+                case 10751:
+                    genres.append(getString(R.string.genre_family));
+                    break;
+                case 14:
+                    genres.append(getString(R.string.genre_fantasy));
+                    break;
+                case 36:
+                    genres.append(getString(R.string.genre_history));
+                    break;
+                case 27:
+                    genres.append(getString(R.string.genre_horror));
+                    break;
+                case 10402:
+                    genres.append(getString(R.string.genre_music));
+                    break;
+                case 9648:
+                    genres.append(getString(R.string.genre_mystery));
+                    break;
+                case 10749:
+                    genres.append(getString(R.string.genre_romance));
+                    break;
+                case 878:
+                    genres.append(getString(R.string.genre_science_fiction));
+                    break;
+                case 10770:
+                    genres.append(getString(R.string.genre_tv_movie));
+                    break;
+                case 53:
+                    genres.append(getString(R.string.genre_thriller));
+                    break;
+                case 10752:
+                    genres.append(getString(R.string.genre_war));
+                    break;
+                case 37:
+                    genres.append(getString(R.string.genre_western));
+                    break;
+            }
+            if (index < genreArray.length - 1) {
+                genres.append(", ");
+            }
+            index++;
+        }
+        mGenreTextView.setText(genres.toString());
     }
 }
