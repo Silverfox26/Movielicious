@@ -13,36 +13,35 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
 
         <ImageView
             android:id="@+id/iv_poster"
             android:layout_width="match_parent"
             android:layout_height="300dp"
+            android:contentDescription="@string/poster_content_desc"
             android:scaleType="centerCrop"
             android:transitionName="transition_poster"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/no_poster" />
+            tools:srcCompat="@drawable/no_poster" />
 
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="Deadpool 2"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/rb_rating"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_poster" />
+            app:layout_constraintTop_toBottomOf="@+id/iv_poster"
+            tools:text="Deadpool 2" />
 
         <RatingBar
             android:id="@+id/rb_rating"
@@ -50,32 +49,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginTop="16dp"
             android:numStars="5"
-
-            android:rating="3.5"
             android:stepSize="0.5"
             app:layout_constraintEnd_toStartOf="@+id/tv_votes"
-            app:layout_constraintTop_toBottomOf="@+id/iv_poster" />
+            app:layout_constraintTop_toBottomOf="@+id/iv_poster"
+            tools:rating="3.5" />
 
         <TextView
             android:id="@+id/tv_votes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:layout_marginTop="16dp"
-            android:text="(451)"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_poster" />
+            app:layout_constraintTop_toBottomOf="@+id/iv_poster"
+            tools:text="(451)" />
 
         <TextView
             android:id="@+id/tv_genre"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/rounded_corner"
@@ -83,35 +78,32 @@
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:paddingTop="4dp"
-            android:text="Action"
             android:textColor="@android:color/white"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_year" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_year"
+            tools:text="Action" />
 
         <TextView
             android:id="@+id/tv_year"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
-            android:text="(2018)"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_title"
+            tools:text="(2018)" />
 
         <TextView
             android:id="@+id/tv_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus dictum molestie elit, in pellentesque purus auctor ac. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Quisque interdum elementum nisi non vestibulum. Morbi ut nulla arcu. Vestibulum vitae sapien est. Morbi porta tortor sed enim eleifend consectetur. Ut vestibulum finibus velit, ut mollis tellus interdum a.  Morbi fermentum, arcu eget aliquet sodales, est nisi tempus libero, eu tempus quam arcu eget sem. Curabitur quis dictum quam. Etiam quis scelerisque ipsum, eu finibus elit. Fusce et semper eros, sit amet congue libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque auctor finibus luctus. Vestibulum tempus dui eget erat commodo mollis. Cras porttitor semper mauris ac interdum.TextView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_genre" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_genre"
+            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus dictum molestie elit, in pellentesque purus auctor ac. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Quisque interdum elementum nisi non vestibulum. Morbi ut nulla arcu. Vestibulum vitae sapien est. Morbi porta tortor sed enim eleifend consectetur. Ut vestibulum finibus velit, ut mollis tellus interdum a.  Morbi fermentum, arcu eget aliquet sodales, est nisi tempus libero, eu tempus quam arcu eget sem. Curabitur quis dictum quam. Etiam quis scelerisque ipsum, eu finibus elit. Fusce et semper eros, sit amet congue libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque auctor finibus luctus. Vestibulum tempus dui eget erat commodo mollis. Cras porttitor semper mauris ac interdum.TextView" />
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

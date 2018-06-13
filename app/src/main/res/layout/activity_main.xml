@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018. Daniel Penz
+  -->
+
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
 
@@ -28,6 +32,6 @@
         android:layout_height="match_parent"
         android:layout_margin="32dp"
         android:gravity="center"
-        android:text="Movie data could not be loaded. Please check your Internet Connection and try again."
+        android:text="@string/error_message"
         android:visibility="invisible" />
 </FrameLayout>

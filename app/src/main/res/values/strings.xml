@@ -27,4 +27,8 @@
     <string name="extra_movie">movie</string>
     <string name="saved_instance_movies">movies</string>
     <string name="transition_poster">transition_poster</string>
+    <string name="error_message">Movie data could not be loaded. Please check your Internet Connection and try again.</string>
+    <string name="poster_content_desc">Movie Poster</string>
+    <string name="menu_item_most_popular">Most Popular</string>
+    <string name="menu_item_top_rated">Top Rated</string>
 </resources>
