@@ -11,23 +11,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/frameLayout"
+
+        <ImageView
+            android:id="@+id/iv_poster"
             android:layout_width="match_parent"
             android:layout_height="300dp"
+            android:scaleType="centerCrop"
+            android:transitionName="transition_poster"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/iv_poster"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:transitionName="transition_poster"
-                app:srcCompat="@drawable/poster" />
-
-        </FrameLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/poster" />
 
         <TextView
             android:id="@+id/tv_title"
@@ -44,7 +38,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/rb_rating"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/iv_poster" />
 
         <RatingBar
             android:id="@+id/rb_rating"
@@ -59,7 +53,7 @@
             android:rating="3.5"
             android:stepSize="0.5"
             app:layout_constraintEnd_toStartOf="@+id/tv_votes"
-            app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/iv_poster" />
 
         <TextView
             android:id="@+id/tv_votes"
@@ -71,7 +65,7 @@
             android:text="(451)"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/iv_poster" />
 
         <TextView
             android:id="@+id/tv_genre"

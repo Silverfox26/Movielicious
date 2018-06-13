@@ -1,7 +1,5 @@
 package com.example.surface4pro.movielicious.utilities;
 
-import android.util.Log;
-
 import com.example.surface4pro.movielicious.model.Movie;
 
 import org.json.JSONArray;
@@ -12,6 +10,12 @@ import java.util.ArrayList;
 
 public final class MovieDbJsonUtils {
 
+    /**
+     * Parses a MovieDatabase JSON String into an ArrayList of Movie objects.
+     *
+     * @param movieJsonString a Json String received from TheMovieDatabase
+     * @return an ArrayList consisting of Movie objects parsed from the movieJsonString
+     */
     public static ArrayList<Movie> getMovieDataFromJson(String movieJsonString) {
         ArrayList<Movie> movieList = new ArrayList<Movie>();
 
@@ -63,7 +67,6 @@ public final class MovieDbJsonUtils {
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.d("JSONError", "Exeption");
             return null;
         }
         return movieList;

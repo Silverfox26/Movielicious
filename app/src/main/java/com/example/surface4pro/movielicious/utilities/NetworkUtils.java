@@ -24,9 +24,15 @@ public final class NetworkUtils {
     final static String PARAM_QUERY = "api_key";
     final static String API_KEY = "YOUR_API_KEY";
 
+    /**
+     * Builds the MovieDatabase API request URL based in the passe in sort parameter.
+     *
+     * @param menuSelection id of the selected menu item
+     * @return build URL
+     */
     public static URL buildURL(int menuSelection) {
-        /* Building the API request URL */
 
+        /* Building the API request URL */
         Uri builtUri = null;
 
         switch (menuSelection) {
@@ -48,7 +54,7 @@ public final class NetworkUtils {
 
         URL url = null;
         try {
-            url = new URL(builtUri.toString());
+            url = new URL(builtUri != null ? builtUri.toString() : null);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -80,5 +86,21 @@ public final class NetworkUtils {
         } finally {
             urlConnection.disconnect();
         }
+    }
+
+    /**
+     * Builds the movie poster URL.
+     *
+     * @param movieImagePath the path to the movie poster
+     * @return build mage URL
+     */
+    public static String buildImageUrl(String movieImagePath) {
+        Uri builtUri = Uri.parse("http://image.tmdb.org/t/p/").buildUpon()
+                .appendPath("w185")
+                .appendEncodedPath(movieImagePath)
+                .build();
+
+        String url = null;
+        return url = builtUri.toString();
     }
 }

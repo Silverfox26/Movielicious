@@ -1,7 +1,6 @@
 package com.example.surface4pro.movielicious;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,10 +10,12 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.surface4pro.movielicious.model.Movie;
+import com.example.surface4pro.movielicious.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 public class DetailActivity extends AppCompatActivity {
 
+    // Member variable declarations
     private Movie mMovie;
 
     private ImageView mPosterImageView;
@@ -30,11 +31,12 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        // set an exit transition
+        // Set an exit transition
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setEnterTransition(new Explode());
         }
 
+        // Initialize the View variables
         mPosterImageView = findViewById(R.id.iv_poster);
         mTitelTextView = findViewById(R.id.tv_title);
         mYearTextVies = findViewById(R.id.tv_year);
@@ -43,26 +45,24 @@ public class DetailActivity extends AppCompatActivity {
         mGenreTextView = findViewById(R.id.tv_genre);
         mDescriptionTextView = findViewById(R.id.tv_description);
 
+        // Get the intent and check its content
         Intent intent = getIntent();
         if (intent.hasExtra("movie")) {
             mMovie = intent.getParcelableExtra("movie");
 
-            Uri builtUri = Uri.parse("http://image.tmdb.org/t/p/").buildUpon()
-                    .appendPath("w185")
-                    .appendEncodedPath(mMovie.getPosterPath())
-                    .build();
-
-            String url = null;
-            url = builtUri.toString();
-
+            // Create the image URL and display it using Picasso
+            String url = NetworkUtils.buildImageUrl(mMovie.getPosterPath());
             Picasso.get().load(url).into(mPosterImageView);
 
+            // Set the movie detail information to the different views
             mTitelTextView.setText(mMovie.getTitle());
             mYearTextVies.setText(mMovie.getReleaseDate().substring(0, 4));
             mRatingRatingBar.setRating(mMovie.getVoteAverage() / 2f);
             mVotesTextView.setText("(" + String.valueOf(mMovie.getVoteCount()) + ")");
+            mDescriptionTextView.setText(mMovie.getDescription());
 
-
+            // Convert the genre id's to their corresponding names and
+            // concatenate them using a StringBuilder
             StringBuilder genres = new StringBuilder();
             int[] genreArray = mMovie.getGenreIds();
 
@@ -135,15 +135,11 @@ public class DetailActivity extends AppCompatActivity {
 
             mGenreTextView.setText(genres.toString());
 
-            mDescriptionTextView.setText(mMovie.getDescription());
-
+            // Set the ActionBar Title to the movie's title
             android.support.v7.app.ActionBar ab = getSupportActionBar();
             if (ab != null) {
                 ab.setTitle(mMovie.getTitle());
             }
-
         }
-
     }
-
 }
