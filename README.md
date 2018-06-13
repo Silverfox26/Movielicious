@@ -1,4 +1,6 @@
 # Movielicious
+![screen](../master/images/logo.png)
+
 Udacity Popular Movies Android App Stage 1
 
 Made as part of Udacity's [Android Developer Nanodegree Program](https://www.udacity.com/course/android-developer-nanodegree-by-google--nd801).
