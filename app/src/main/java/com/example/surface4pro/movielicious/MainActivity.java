@@ -30,7 +30,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
 
-    URL url = null;
+    private URL url = null;
 
     private MovieAdapter mMovieAdapter;
     private RecyclerView mMoviesRecyclerView;
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     /**
      * This method sets the RecyclerView invisible and shows the error message
      */
-    public void showErrorMessage() {
+    private void showErrorMessage() {
         mMoviesRecyclerView.setVisibility(View.INVISIBLE);
         mErrorMessage.setVisibility(View.VISIBLE);
     }
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     /**
      * This method shows the RecyclerView and hides the error message
      */
-    public void showMovieData() {
+    private void showMovieData() {
         mMoviesRecyclerView.setVisibility(View.VISIBLE);
         mErrorMessage.setVisibility(View.INVISIBLE);
     }
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private static class FetchMoviesTask extends AsyncTask<URL, Void, ArrayList<Movie>> {
 
-        private WeakReference<MainActivity> activityReference;
+        private final WeakReference<MainActivity> activityReference;
 
         // only retain a weak reference to the activity
         FetchMoviesTask(MainActivity context) {
