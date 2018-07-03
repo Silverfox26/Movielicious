@@ -27,6 +27,7 @@ public final class NetworkUtils {
     private final static String PATH_SORT_POPULAR = "popular";
     private final static String PATH_SORT_TOP_RATED = "top_rated";
     private final static String PARAM_QUERY = "api_key";
+    private final static String API_KEY = BuildConfig.MOVIE_DB_API_KEY;
 
     private final static String MOVIEDB_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
     private final static String PATH_IMAGE_WIDTH = "w342";
@@ -47,14 +48,14 @@ public final class NetworkUtils {
                 builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
                         .appendPath(PATH_MOVIES)
                         .appendPath(PATH_SORT_POPULAR)
-                        .appendQueryParameter(PARAM_QUERY, BuildConfig.MOVIE_DB_API_KEY)
+                        .appendQueryParameter(PARAM_QUERY, API_KEY)
                         .build();
                 break;
             case R.id.menu_top_rated:
                 builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
                         .appendPath(PATH_MOVIES)
                         .appendPath(PATH_SORT_TOP_RATED)
-                        .appendQueryParameter(PARAM_QUERY, BuildConfig.MOVIE_DB_API_KEY)
+                        .appendQueryParameter(PARAM_QUERY, API_KEY)
                         .build();
                 break;
         }
