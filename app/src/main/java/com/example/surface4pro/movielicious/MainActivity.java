@@ -131,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             case R.id.menu_top_rated:
                 loadMovieData(R.id.menu_top_rated);
                 return true;
+            case R.id.menu_favorites:
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
