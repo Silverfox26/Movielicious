@@ -12,7 +12,7 @@ public class MovieRepository {
     private MovieDao mMovieDao;
     private LiveData<ArrayList<Movie>> mMovies;
 
-    MovieRepository(Application application) {
+    public MovieRepository(Application application) {
         MovieRoomDatabase db = MovieRoomDatabase.getDatabase(application);
         mMovieDao = db.movieDao();
         // TODO Change to variable Origins
@@ -22,7 +22,7 @@ public class MovieRepository {
     // Wrapper to get the list of movies
     // Room executes all queries on a separate thread.
     // Observed LiveData will notify the observer when the data has changed.
-    LiveData<ArrayList<Movie>> getMovies() {
+    public LiveData<ArrayList<Movie>> getMovies() {
         return mMovies;
     }
 
