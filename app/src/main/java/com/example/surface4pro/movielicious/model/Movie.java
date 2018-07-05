@@ -11,7 +11,7 @@ import android.arch.persistence.room.PrimaryKey;
 /**
  * Class for custom Movie objects.
  */
-@Entity(tableName = "word_table")
+@Entity(tableName = "movie_table")
 public class Movie {
 
     @PrimaryKey(autoGenerate = true)
