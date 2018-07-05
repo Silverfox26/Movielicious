@@ -6,6 +6,7 @@ package com.example.surface4pro.movielicious.utilities;
 
 import com.example.surface4pro.movielicious.model.Movie;
 import com.example.surface4pro.movielicious.model.Review;
+import com.example.surface4pro.movielicious.model.Video;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -96,7 +97,6 @@ public final class MovieDbJsonUtils {
         return movieList;
     }
 
-
     public static ArrayList<Review> getReviewDataFromJson(String reviewJsonString) {
         ArrayList<Review> reviewList = new ArrayList<>();
 
@@ -126,6 +126,43 @@ public final class MovieDbJsonUtils {
             return null;
         }
         return reviewList;
+    }
+
+    public static ArrayList<Video> getVideoDataFromJson(String videoJsonString) {
+        ArrayList<Video> videoList = new ArrayList<>();
+
+        // String Constants for parsing the Json String
+        final String RESULTS = "results";
+        final String KEY = "key";
+        final String NAME = "name";
+        final String SITE = "site";
+        final String TYPE = "type";
+
+        JSONObject videos;
+        try {
+            videos = new JSONObject(videoJsonString);
+
+            JSONArray results = videos.getJSONArray(RESULTS);
+
+            for (int i = 0; i < results.length(); i++) {
+                JSONObject video = results.getJSONObject(i);
+
+                String key = video.getString(KEY);
+                String name = video.getString(NAME);
+                String site = video.getString(SITE);
+                String type = video.getString(TYPE);
+
+                videoList.add(i, new Video(
+                        key,
+                        name,
+                        site,
+                        type));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return videoList;
     }
 
 }

@@ -181,6 +181,8 @@ public class DetailActivity extends AppCompatActivity {
         Log.d("AAA", "populateUI: " + NetworkUtils.buildReviewURL(movie.getMovieId()));
         URL reviewUrl = NetworkUtils.buildReviewURL(movie.getMovieId());
         new FetchReviewsTask(this).execute(reviewUrl);
+
+        Log.d("AAA", "populateUI: " + NetworkUtils.buildVideoURL(movie.getMovieId()));
     }
 
     private static class FetchReviewsTask extends AsyncTask<URL, Void, List<Review>> {
