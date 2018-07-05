@@ -6,9 +6,11 @@ package com.example.surface4pro.movielicious;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.Explode;
+import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -17,12 +19,20 @@ import android.widget.TextView;
 
 import com.example.surface4pro.movielicious.data.MovieRoomDatabase;
 import com.example.surface4pro.movielicious.model.Movie;
+import com.example.surface4pro.movielicious.model.Review;
+import com.example.surface4pro.movielicious.utilities.MovieDbJsonUtils;
 import com.example.surface4pro.movielicious.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.net.URL;
+import java.util.List;
 
 public class DetailActivity extends AppCompatActivity {
 
     private MovieViewModel mMovieViewModel;
+    private List<Review> mReviews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,5 +177,66 @@ public class DetailActivity extends AppCompatActivity {
                 }
             }
         });
+
+        Log.d("AAA", "populateUI: " + NetworkUtils.buildReviewURL(movie.getMovieId()));
+        URL reviewUrl = NetworkUtils.buildReviewURL(movie.getMovieId());
+        new FetchReviewsTask(this).execute(reviewUrl);
+    }
+
+    private static class FetchReviewsTask extends AsyncTask<URL, Void, List<Review>> {
+
+        private final WeakReference<DetailActivity> activityReference;
+
+        // only retain a weak reference to the activity
+        FetchReviewsTask(DetailActivity context) {
+            activityReference = new WeakReference<>(context);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // get a reference to the activity if it is still there
+            DetailActivity activity = activityReference.get();
+            if (activity == null || activity.isFinishing()) return;
+        }
+
+        @Override
+        protected List<Review> doInBackground(URL... urls) {
+            // get a reference to the activity if it is still there
+            DetailActivity activity = activityReference.get();
+            if (activity == null || activity.isFinishing()) return null;
+
+            URL queryUrl = urls[0];
+            String reviewQueryResults;
+            try {
+                reviewQueryResults = NetworkUtils.getResponseFromHttpUrl(queryUrl);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+            activity.mReviews = MovieDbJsonUtils.getReviewDataFromJson(reviewQueryResults);
+
+            return activity.mReviews;
+        }
+
+        @Override
+        protected void onPostExecute(List<Review> reviews) {
+            // get a reference to the activity if it is still there
+            DetailActivity activity = activityReference.get();
+            if (activity == null || activity.isFinishing()) return;
+
+            TextView reviewTextView = activity.findViewById(R.id.tv_review);
+            StringBuilder reviewString = new StringBuilder();
+            for (Review review : reviews) {
+                reviewString.append(review.getAuthor());
+                reviewString.append("\n");
+                reviewString.append(review.getContent());
+            }
+
+            reviewTextView.setText(reviewString.toString());
+
+            Log.d("AAA", "onPostExecute: " + reviews.toString());
+        }
     }
 }

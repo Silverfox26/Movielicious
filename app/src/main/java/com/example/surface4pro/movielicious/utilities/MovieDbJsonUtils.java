@@ -5,6 +5,7 @@
 package com.example.surface4pro.movielicious.utilities;
 
 import com.example.surface4pro.movielicious.model.Movie;
+import com.example.surface4pro.movielicious.model.Review;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -94,4 +95,37 @@ public final class MovieDbJsonUtils {
         }
         return movieList;
     }
+
+
+    public static ArrayList<Review> getReviewDataFromJson(String reviewJsonString) {
+        ArrayList<Review> reviewList = new ArrayList<>();
+
+        // String Constants for parsing the Json String
+        final String RESULTS = "results";
+        final String AUTHOR = "author";
+        final String CONTENT = "content";
+
+        JSONObject reviews;
+        try {
+            reviews = new JSONObject(reviewJsonString);
+
+            JSONArray results = reviews.getJSONArray(RESULTS);
+
+            for (int i = 0; i < results.length(); i++) {
+                JSONObject review = results.getJSONObject(i);
+
+                String author = review.getString(AUTHOR);
+                String content = review.getString(CONTENT);
+
+                reviewList.add(i, new Review(
+                        author,
+                        content));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return reviewList;
+    }
+
 }

@@ -29,6 +29,9 @@ public final class NetworkUtils {
     private final static String PARAM_QUERY = "api_key";
     private final static String API_KEY = BuildConfig.MOVIE_DB_API_KEY;
 
+    // URL constants for reviews
+    private final static String PATH_REVIEWS = "reviews";
+
     private final static String MOVIEDB_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
     private final static String PATH_IMAGE_WIDTH = "w342";
 
@@ -69,6 +72,35 @@ public final class NetworkUtils {
 
         return url;
     }
+
+    /**
+     * Builds the MovieDatabase API Review request URL based on the passed in movieId.
+     *
+     * @param movieId id of the selected movie
+     * @return build URL
+     */
+    public static URL buildReviewURL(int movieId) {
+
+        /* Building the API request URL */
+        Uri builtUri = null;
+
+        builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
+                .appendPath(PATH_MOVIES)
+                .appendPath(String.valueOf(movieId))
+                .appendPath(PATH_REVIEWS)
+                .appendQueryParameter(PARAM_QUERY, API_KEY)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri != null ? builtUri.toString() : null);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
 
     /**
      * Builds the movie poster URL.
