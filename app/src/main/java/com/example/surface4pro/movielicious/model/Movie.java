@@ -4,28 +4,45 @@
 
 package com.example.surface4pro.movielicious.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 
 /**
  * Class for custom Movie objects.
  */
-public class Movie implements Parcelable {
+@Entity(tableName = "word_table")
+public class Movie {
 
+    @PrimaryKey(autoGenerate = true)
     private int id;
+
+    @ColumnInfo(name = "movie_id")
+    private int movieId;
     private String title;
+    @ColumnInfo(name = "original_title")
     private String originalTitle;
+    @ColumnInfo(name = "vote_count")
     private int voteCount;
+    @ColumnInfo(name = "vote_average")
     private int voteAverage;
+    @ColumnInfo(name = "release_date")
     private String releaseDate;
     private String description;
     private int popularity;
+    @ColumnInfo(name = "poster_path")
     private String posterPath;
+    @ColumnInfo(name = "backdrop_path")
     private String backdropPath;
     private boolean video;
+    @ColumnInfo(name = "original_language")
     private String originalLanguage;
+    @ColumnInfo(name = "genre_ids")
     private int[] genreIds;
+    @ColumnInfo(name = "only_for_adults")
     private boolean onlyForAdults;
+
+    private int origin;
 
     /**
      * Movie constructor.
@@ -45,7 +62,7 @@ public class Movie implements Parcelable {
      * @param genreIds         Array of int ids refereing to the genres.
      * @param onlyForAdults    Is only for adults?
      */
-    public Movie(int id, String title, String originalTitle, int voteCount, int voteAverage, String releaseDate, String description, int popularity, String posterPath, String backdropPath, boolean video, String originalLanguage, int[] genreIds, boolean onlyForAdults) {
+    public Movie(int id, String title, String originalTitle, int voteCount, int voteAverage, String releaseDate, String description, int popularity, String posterPath, String backdropPath, boolean video, String originalLanguage, int[] genreIds, boolean onlyForAdults, int origin) {
         this.id = id;
         this.title = title;
         this.originalTitle = originalTitle;
@@ -60,35 +77,7 @@ public class Movie implements Parcelable {
         this.originalLanguage = originalLanguage;
         this.genreIds = genreIds;
         this.onlyForAdults = onlyForAdults;
-    }
-
-    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
-        @Override
-        public Movie createFromParcel(Parcel in) {
-            return new Movie(in);
-        }
-
-        @Override
-        public Movie[] newArray(int size) {
-            return new Movie[size];
-        }
-    };
-
-    private Movie(Parcel in) {
-        id = in.readInt();
-        title = in.readString();
-        originalTitle = in.readString();
-        voteCount = in.readInt();
-        voteAverage = in.readInt();
-        releaseDate = in.readString();
-        description = in.readString();
-        popularity = in.readInt();
-        posterPath = in.readString();
-        backdropPath = in.readString();
-        video = in.readByte() != 0;
-        originalLanguage = in.readString();
-        genreIds = in.createIntArray();
-        onlyForAdults = in.readByte() != 0;
+        this.origin = origin;
     }
 
     public int getId() {
@@ -203,43 +192,19 @@ public class Movie implements Parcelable {
         this.onlyForAdults = onlyForAdults;
     }
 
-    /**
-     * Describe the kinds of special objects contained in this Parcelable
-     * instance's marshaled representation. For example, if the object will
-     * include a file descriptor in the output of {@link #writeToParcel(Parcel, int)},
-     * the return value of this method must include the
-     * {@link #CONTENTS_FILE_DESCRIPTOR} bit.
-     *
-     * @return a bitmask indicating the set of special object types marshaled
-     * by this Parcelable object instance.
-     */
-    @Override
-    public int describeContents() {
-        return 0;
+    public int getMovieId() {
+        return movieId;
     }
 
-    /**
-     * Flatten this object in to a Parcel.
-     *
-     * @param dest  The Parcel in which the object should be written.
-     * @param flags Additional flags about how the object should be written.
-     *              May be 0 or {@link #PARCELABLE_WRITE_RETURN_VALUE}.
-     */
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(title);
-        dest.writeString(originalTitle);
-        dest.writeInt(voteCount);
-        dest.writeInt(voteAverage);
-        dest.writeString(releaseDate);
-        dest.writeString(description);
-        dest.writeInt(popularity);
-        dest.writeString(posterPath);
-        dest.writeString(backdropPath);
-        dest.writeByte((byte) (video ? 1 : 0));
-        dest.writeString(originalLanguage);
-        dest.writeIntArray(genreIds);
-        dest.writeByte((byte) (onlyForAdults ? 1 : 0));
+    public void setMovieId(int movieId) {
+        this.movieId = movieId;
+    }
+
+    public int getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(int origin) {
+        this.origin = origin;
     }
 }
