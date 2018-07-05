@@ -20,7 +20,7 @@ public final class MovieDbJsonUtils {
      * @param movieJsonString a Json String received from TheMovieDatabase
      * @return an ArrayList consisting of Movie objects parsed from the movieJsonString
      */
-    public static ArrayList<Movie> getMovieDataFromJson(String movieJsonString) {
+    public static ArrayList<Movie> getMovieDataFromJson(String movieJsonString, int originId) {
         ArrayList<Movie> movieList = new ArrayList<>();
 
         // String Constants for parsing the Json String
@@ -86,8 +86,7 @@ public final class MovieDbJsonUtils {
                         originalLanguage,
                         genreIds,
                         onlyForAdults,
-                        //TODO CHANGE TO BE VARIABLE
-                        0));
+                        originId));
             }
         } catch (JSONException e) {
             e.printStackTrace();

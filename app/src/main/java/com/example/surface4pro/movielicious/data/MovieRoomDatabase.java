@@ -9,6 +9,10 @@ import com.example.surface4pro.movielicious.model.Movie;
 
 @Database(entities = {Movie.class}, version = 1, exportSchema = false)
 public abstract class MovieRoomDatabase extends RoomDatabase {
+    public static final int ORIGIN_ID_MOST_POPULAR = 0;
+    public static final int ORIGIN_ID_TOP_RATED = 1;
+    public static final int ORIGIN_ID_FAVORITES = 2;
+
     // Using the Singleton Pattern to make sure that only one instance of the database can
     // be opened at the same time.
     private static MovieRoomDatabase INSTANCE;

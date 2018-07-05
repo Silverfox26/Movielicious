@@ -36,12 +36,18 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private URL url = null;
 
+
+    //private MovieAdapter mMovieAdapter;
     private RecyclerView mMoviesRecyclerView;
     private ProgressBar mLoadingIndicator;
     private TextView mErrorMessage;
     // Member variable declarations
     private List<Movie> movies = null;
     private MovieViewModel mMovieViewModel;
+
+    // private Observer<List<Movie>> mObserver;
+
+    private int selection = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,25 +72,46 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         // Configuring the RecyclerView and setting its adapter
         mMoviesRecyclerView.setLayoutManager(layoutManager);
         mMoviesRecyclerView.setHasFixedSize(true);
-        final MovieAdapter mMovieAdapter = new MovieAdapter(this);
-        mMoviesRecyclerView.setAdapter(mMovieAdapter);
+        final MovieAdapter movieAdapter = new MovieAdapter(this);
+        mMoviesRecyclerView.setAdapter(movieAdapter);
 
         // The ViewModelProvider will create the ViewModel, when the app first starts.
         // When the activity is destroyed (ex. configuration change), the ViewModel persists.
         // When the activity is recreated, the Provider returns the existing ViewModel.
         mMovieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
 
-        // Observer for the LiveData
-        mMovieViewModel.getMovies().observe(this, new Observer<List<Movie>>() {
+/*        mObserver = new Observer<List<Movie>>() {
             @Override
             public void onChanged(@Nullable List<Movie> movies) {
                 // Update the cached copy of the movies in the Adapter.
                 mMovieAdapter.setMovieData(movies);
             }
-        });
+        };*/
 
-        loadMovieData(R.id.menu_most_popular, mMovieAdapter);
+        if (savedInstanceState != null && savedInstanceState.containsKey("selection")) {
+            selection = savedInstanceState.getInt("selection");
+        }
 
+        if (selection == -1 || selection == 0) {
+            // Observer for the LiveData
+            mMovieViewModel.getMostPopularMovies().observe(this, new Observer<List<Movie>>() {
+                @Override
+                public void onChanged(@Nullable List<Movie> movies) {
+                    // Update the cached copy of the movies in the Adapter.
+                    movieAdapter.setMovieData(movies);
+                }
+            });
+        } else if (selection == 1) {
+            mMovieViewModel.getTopRatedMovies().observe(this, new Observer<List<Movie>>() {
+                @Override
+                public void onChanged(@Nullable List<Movie> movies) {
+                    // Update the cached copy of the movies in the Adapter.
+                    movieAdapter.setMovieData(movies);
+                }
+            });
+        }
+
+        // loadMovieData(R.id.menu_most_popular, MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
     }
 
     /**
@@ -109,10 +136,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
      * @param sortParam integer corresponding to the requested movie data
      *                  (possible values R.id.menu_most_popular and R.id.menu_highest_rated)
      */
-    private void loadMovieData(int sortParam, MovieAdapter movieAdapter) {
+    private void loadMovieData(int sortParam, int originId) {
         showMovieData();
         url = NetworkUtils.buildURL(sortParam);
-        new FetchMoviesTask(this, movieAdapter).execute(url);
+        new FetchMoviesTask(this, originId).execute(url);
     }
 
     /**
@@ -120,7 +147,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
      */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        //outState.putParcelableArrayList(getString(R.string.saved_instance_movies), movies);
+        // outState.putParcelableArrayList(getString(R.string.saved_instance_movies), movies);
+        outState.putInt("selection", selection);
         super.onSaveInstanceState(outState);
     }
 
@@ -137,16 +165,31 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         switch (itemThatWasClickedId) {
             case R.id.menu_most_popular:
-                //loadMovieData(R.id.menu_most_popular);
+                selection = 0;
+                //removeObservers();
+                //mMovieViewModel.deleteWithOrigin(MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
+                //mMovieViewModel.getMostPopularMovies().observe(this, mObserver);
+                //loadMovieData(R.id.menu_most_popular, MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
+
                 return true;
             case R.id.menu_top_rated:
-                //loadMovieData(R.id.menu_top_rated);
+                selection = 1;
+                //removeObservers();
+                //mMovieViewModel.deleteWithOrigin(MovieRoomDatabase.ORIGIN_ID_TOP_RATED);
+                //mMovieViewModel.getTopRatedMovies().observe(this, mObserver);
+                //loadMovieData(R.id.menu_top_rated, MovieRoomDatabase.ORIGIN_ID_TOP_RATED);
                 return true;
             case R.id.menu_favorites:
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void removeObservers() {
+        // TODO Maybe add check if Observer exists?
+        // mMovieViewModel.getMostPopularMovies().removeObserver(mObserver);
+        //mMovieViewModel.getTopRatedMovies().removeObserver(mObserver);
     }
 
     @Override
@@ -164,12 +207,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private static class FetchMoviesTask extends AsyncTask<URL, Void, List<Movie>> {
 
         private final WeakReference<MainActivity> activityReference;
-        private final MovieAdapter movieAdapter;
+        private final int originId;
 
         // only retain a weak reference to the activity
-        FetchMoviesTask(MainActivity context, MovieAdapter movieAdapter) {
+        FetchMoviesTask(MainActivity context, int originId) {
             activityReference = new WeakReference<>(context);
-            this.movieAdapter = movieAdapter;
+            this.originId = originId;
         }
 
         @Override
@@ -198,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 return null;
             }
 
-            activity.movies = MovieDbJsonUtils.getMovieDataFromJson(movieQueryResults);
+            activity.movies = MovieDbJsonUtils.getMovieDataFromJson(movieQueryResults, originId);
 
             return activity.movies;
         }
@@ -215,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
             if (movies != null) {
                 activity.showMovieData();
-//                movieAdapter.setMovieData(movies);
+//                mMovieAdapter.setMovieData(movies);
 //                activity.mMoviesRecyclerView.scrollToPosition(0);
             } else {
                 activity.showErrorMessage();

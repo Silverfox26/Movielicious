@@ -17,15 +17,24 @@ public class MovieViewModel extends AndroidViewModel {
     public MovieViewModel(Application application) {
         super(application);
         mRepository = new MovieRepository(application);
-        mMovies = mRepository.getMovies();
     }
 
     // Getter Method to completely hide the implementation from the UI
-    public LiveData<List<Movie>> getMovies() {
+    public LiveData<List<Movie>> getMostPopularMovies() {
+        mMovies = mRepository.getMostPopularMovies();
+        return mMovies;
+    }
+
+    public LiveData<List<Movie>> getTopRatedMovies() {
+        mMovies = mRepository.getTopRatedMovies();
         return mMovies;
     }
 
     public void insertMovies(List<Movie> movies) {
         mRepository.insertMovies(movies);
+    }
+
+    public void deleteWithOrigin(int origin) {
+        mRepository.deleteWithOrigin(origin);
     }
 }
