@@ -80,7 +80,7 @@ public class DetailActivity extends AppCompatActivity {
         final Movie movie = mMovieViewModel.getMovieById(movieId);
 
         sharedViewModel = ViewModelProviders.of(DetailActivity.this).get(SharedDetailViewModel.class);
-        sharedViewModel.select(movie);
+        sharedViewModel.saveMovie(movie);
 
         // Declare and initialize View variables
         ImageView mPosterImageView = findViewById(R.id.iv_poster);
@@ -247,17 +247,7 @@ public class DetailActivity extends AppCompatActivity {
             DetailActivity activity = activityReference.get();
             if (activity == null || activity.isFinishing()) return;
 
-            TextView reviewTextView = activity.findViewById(R.id.tv_review);
-            StringBuilder reviewString = new StringBuilder();
-            for (Review review : reviews) {
-                reviewString.append(review.getAuthor());
-                reviewString.append("\n");
-                reviewString.append(review.getContent());
-            }
-
-            reviewTextView.setText(reviewString.toString());
-
-            Log.d("AAA", "onPostExecute: " + reviews.toString());
+            activity.sharedViewModel.saveReviewList(reviews);
         }
     }
 }

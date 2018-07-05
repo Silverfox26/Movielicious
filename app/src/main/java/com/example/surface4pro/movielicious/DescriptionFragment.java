@@ -42,10 +42,10 @@ public class DescriptionFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        TextView descriptionTextView = getView().findViewById(R.id.tv_description_fragment);
+        TextView descriptionTextView = view.findViewById(R.id.tv_description_fragment);
 
         SharedDetailViewModel sharedViewModel = ViewModelProviders.of(getActivity()).get(SharedDetailViewModel.class);
-        sharedViewModel.getSelected().observe(this, movie -> {
+        sharedViewModel.getSavedMovie().observe(this, movie -> {
             descriptionTextView.setText(movie.getDescription());
         });
     }
