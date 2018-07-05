@@ -43,4 +43,16 @@ public class MovieRepository {
     public Movie getMovieById(int id) {
         return mMovieDao.getMovieById(id);
     }
+
+    public boolean isMovieFavorite(int movieId) {
+        return mMovieDao.isMovieFavorite(movieId);
+    }
+
+    public void insertFavoriteMovie(Movie movie) {
+        mMovieDao.insertFavoriteMovie(movie);
+    }
+
+    public void deleteFavorite(int movieId) {
+        mMovieDao.deleteFavorite(movieId);
+    }
 }

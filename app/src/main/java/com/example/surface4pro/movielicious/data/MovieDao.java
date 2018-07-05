@@ -24,11 +24,14 @@ public interface MovieDao {
     @Query("SELECT * from movie_table WHERE id = :id")
     Movie getMovieById(int id);
 
+    @Query("SELECT EXISTS(SELECT * from movie_table WHERE movie_id = :movieId AND origin = 2)")
+    boolean isMovieFavorite(int movieId);
+
     @Query("DELETE from movie_table WHERE origin = :origin")
     void deleteWithOrigin(int origin);
 
-    @Query("DELETE from movie_table WHERE origin = :origin AND movie_id = :movieId")
-    void deleteFavorite(int movieId, int origin);
+    @Query("DELETE from movie_table WHERE origin = 2 AND movie_id = :movieId")
+    void deleteFavorite(int movieId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertFavoriteMovie(Movie movie);

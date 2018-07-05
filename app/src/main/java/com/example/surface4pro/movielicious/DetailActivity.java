@@ -9,10 +9,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.Explode;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.Switch;
 import android.widget.TextView;
 
+import com.example.surface4pro.movielicious.data.MovieRoomDatabase;
 import com.example.surface4pro.movielicious.model.Movie;
 import com.example.surface4pro.movielicious.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
@@ -44,9 +47,9 @@ public class DetailActivity extends AppCompatActivity {
      *
      * @param movieId Movie id.
      */
-    private void populateUI(int movieId) {
+    private void populateUI(final int movieId) {
 
-        Movie movie = mMovieViewModel.getMovieById(movieId);
+        final Movie movie = mMovieViewModel.getMovieById(movieId);
 
         // Declare and initialize View variables
         ImageView mPosterImageView = findViewById(R.id.iv_poster);
@@ -56,6 +59,7 @@ public class DetailActivity extends AppCompatActivity {
         TextView mVotesTextView = findViewById(R.id.tv_votes);
         TextView mGenreTextView = findViewById(R.id.tv_genre);
         TextView mDescriptionTextView = findViewById(R.id.tv_description);
+        Switch mFavoriteSwitch = findViewById(R.id.sw_favorite);
 
         // Set the ActionBar Title to the movie's title
         android.support.v7.app.ActionBar ab = getSupportActionBar();
@@ -146,5 +150,22 @@ public class DetailActivity extends AppCompatActivity {
             index++;
         }
         mGenreTextView.setText(genres.toString());
+
+        if (mMovieViewModel.isMovieFavorite(movie.getMovieId())) {
+            mFavoriteSwitch.setChecked(true);
+
+        }
+
+        mFavoriteSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    movie.setOrigin(MovieRoomDatabase.ORIGIN_ID_FAVORITES);
+                    movie.setId(0);
+                    mMovieViewModel.insertFavoriteMovie(movie);
+                } else {
+                    mMovieViewModel.deleteFavorite(movie.getMovieId());
+                }
+            }
+        });
     }
 }

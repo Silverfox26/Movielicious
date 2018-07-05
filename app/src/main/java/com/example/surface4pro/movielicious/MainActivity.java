@@ -39,6 +39,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private URL url = null;
 
+    // TODO ADD Favorite Button
+    // TODO Implement Favorite Functionality
+    // TODO Add Query to check if Movie is already Favorite
 
     //private MovieAdapter mMovieAdapter;
     private RecyclerView mMoviesRecyclerView;

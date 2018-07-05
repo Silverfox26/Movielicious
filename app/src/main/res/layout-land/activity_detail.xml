@@ -105,6 +105,17 @@
                 app:layout_constraintTop_toBottomOf="@+id/tv_title"
                 tools:text="(2018)" />
 
+            <Switch
+                android:id="@+id/sw_favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Favorite"
+                android:textOff="Remove Favorite"
+                android:textOn="Make Favorite"
+                app:layout_constraintBottom_toTopOf="@+id/tv_description"
+                app:layout_constraintEnd_toEndOf="@+id/tv_votes" />
+
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
 </LinearLayout>
