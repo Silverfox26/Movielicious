@@ -67,7 +67,7 @@ public class Movie {
      * @param onlyForAdults    Is only for adults?
      */
     public Movie(int id, String title, String originalTitle, int voteCount, int voteAverage, String releaseDate, String description, int popularity, String posterPath, String backdropPath, boolean video, String originalLanguage, int[] genreIds, boolean onlyForAdults, int origin) {
-        this.id = id;
+        this.movieId = id;
         this.title = title;
         this.originalTitle = originalTitle;
         this.voteCount = voteCount;

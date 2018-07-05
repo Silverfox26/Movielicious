@@ -22,8 +22,10 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.surface4pro.movielicious.data.MovieRoomDatabase;
 import com.example.surface4pro.movielicious.model.Movie;
 import com.example.surface4pro.movielicious.utilities.MovieDbJsonUtils;
+import com.example.surface4pro.movielicious.utilities.NetworkStatus;
 import com.example.surface4pro.movielicious.utilities.NetworkUtils;
 import com.facebook.stetho.Stetho;
 
@@ -45,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private List<Movie> movies = null;
     private MovieViewModel mMovieViewModel;
 
-    // private Observer<List<Movie>> mObserver;
+    private Observer<List<Movie>> mObserver;
 
     private int selection = -1;
 
@@ -80,38 +82,27 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         // When the activity is recreated, the Provider returns the existing ViewModel.
         mMovieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
 
-/*        mObserver = new Observer<List<Movie>>() {
+        mObserver = new Observer<List<Movie>>() {
             @Override
             public void onChanged(@Nullable List<Movie> movies) {
                 // Update the cached copy of the movies in the Adapter.
-                mMovieAdapter.setMovieData(movies);
+                movieAdapter.setMovieData(movies);
             }
-        };*/
+        };
 
         if (savedInstanceState != null && savedInstanceState.containsKey("selection")) {
             selection = savedInstanceState.getInt("selection");
+        } else {
+            mMovieViewModel.deleteWithOrigin(MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
+            loadMovieData(R.id.menu_most_popular, MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
         }
 
         if (selection == -1 || selection == 0) {
             // Observer for the LiveData
-            mMovieViewModel.getMostPopularMovies().observe(this, new Observer<List<Movie>>() {
-                @Override
-                public void onChanged(@Nullable List<Movie> movies) {
-                    // Update the cached copy of the movies in the Adapter.
-                    movieAdapter.setMovieData(movies);
-                }
-            });
+            mMovieViewModel.getMostPopularMovies().observe(this, mObserver);
         } else if (selection == 1) {
-            mMovieViewModel.getTopRatedMovies().observe(this, new Observer<List<Movie>>() {
-                @Override
-                public void onChanged(@Nullable List<Movie> movies) {
-                    // Update the cached copy of the movies in the Adapter.
-                    movieAdapter.setMovieData(movies);
-                }
-            });
+            mMovieViewModel.getTopRatedMovies().observe(this, mObserver);
         }
-
-        // loadMovieData(R.id.menu_most_popular, MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
     }
 
     /**
@@ -166,18 +157,23 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         switch (itemThatWasClickedId) {
             case R.id.menu_most_popular:
                 selection = 0;
-                //removeObservers();
-                //mMovieViewModel.deleteWithOrigin(MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
-                //mMovieViewModel.getMostPopularMovies().observe(this, mObserver);
-                //loadMovieData(R.id.menu_most_popular, MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
-
+                removeObservers();
+                mMovieViewModel.getMostPopularMovies().observe(this, mObserver);
+                mMoviesRecyclerView.smoothScrollToPosition(0);
+                if (NetworkStatus.isOnline(this)) {
+                    mMovieViewModel.deleteWithOrigin(MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
+                    loadMovieData(R.id.menu_most_popular, MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
+                }
                 return true;
             case R.id.menu_top_rated:
                 selection = 1;
-                //removeObservers();
-                //mMovieViewModel.deleteWithOrigin(MovieRoomDatabase.ORIGIN_ID_TOP_RATED);
-                //mMovieViewModel.getTopRatedMovies().observe(this, mObserver);
-                //loadMovieData(R.id.menu_top_rated, MovieRoomDatabase.ORIGIN_ID_TOP_RATED);
+                removeObservers();
+                mMovieViewModel.getTopRatedMovies().observe(this, mObserver);
+                mMoviesRecyclerView.smoothScrollToPosition(0);
+                if (NetworkStatus.isOnline(this)) {
+                    mMovieViewModel.deleteWithOrigin(MovieRoomDatabase.ORIGIN_ID_TOP_RATED);
+                    loadMovieData(R.id.menu_top_rated, MovieRoomDatabase.ORIGIN_ID_TOP_RATED);
+                }
                 return true;
             case R.id.menu_favorites:
                 return true;
@@ -188,8 +184,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     public void removeObservers() {
         // TODO Maybe add check if Observer exists?
-        // mMovieViewModel.getMostPopularMovies().removeObserver(mObserver);
-        //mMovieViewModel.getTopRatedMovies().removeObserver(mObserver);
+        mMovieViewModel.getMostPopularMovies().removeObserver(mObserver);
+        mMovieViewModel.getTopRatedMovies().removeObserver(mObserver);
     }
 
     @Override
