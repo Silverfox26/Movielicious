@@ -1,5 +1,6 @@
 package com.example.surface4pro.movielicious.data;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
@@ -15,7 +16,7 @@ public interface MovieDao {
     ArrayList<Movie> getAllMovies();
 
     @Query("SELECT * from movie_table WHERE origin = :origin ORDER BY id ASC")
-    ArrayList<Movie> getMoviesByOrigin(int origin);
+    LiveData<ArrayList<Movie>> getMoviesByOrigin(int origin);
 
     @Query("DELETE from movie_table WHERE origin = :origin")
     void deleteWithOrigin(int origin);
