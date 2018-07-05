@@ -39,9 +39,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private URL url = null;
 
-    // TODO ADD Favorite Button
-    // TODO Implement Favorite Functionality
-    // TODO Add Query to check if Movie is already Favorite
+    // TODO Add Video links to DtailActivity
+    // TODO Add reviews to DetailActivity
+    // TODO break ViewModel class into two one for Main one for Detail
+    // TODO clean up code
+    // TODO Add comments
 
     //private MovieAdapter mMovieAdapter;
     private RecyclerView mMoviesRecyclerView;
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private Observer<List<Movie>> mObserver;
 
-    private int selection = -1;
+    private int selection = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,11 +103,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             loadMovieData(R.id.menu_most_popular, MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
         }
 
-        if (selection == -1 || selection == 0) {
+        if (selection == 0) {
             // Observer for the LiveData
             mMovieViewModel.getMostPopularMovies().observe(this, mObserver);
         } else if (selection == 1) {
             mMovieViewModel.getTopRatedMovies().observe(this, mObserver);
+        } else if (selection == 2) {
+            mMovieViewModel.getFavoriteMovies().observe(this, mObserver);
         }
     }
 
@@ -180,6 +184,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 }
                 return true;
             case R.id.menu_favorites:
+                selection = 2;
+                removeObservers();
+                mMovieViewModel.getFavoriteMovies().observe(this, mObserver);
+                mMoviesRecyclerView.smoothScrollToPosition(0);
                 return true;
         }
 
@@ -190,6 +198,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         // TODO Maybe add check if Observer exists?
         mMovieViewModel.getMostPopularMovies().removeObserver(mObserver);
         mMovieViewModel.getTopRatedMovies().removeObserver(mObserver);
+        mMovieViewModel.getFavoriteMovies().removeObserver(mObserver);
     }
 
     @Override

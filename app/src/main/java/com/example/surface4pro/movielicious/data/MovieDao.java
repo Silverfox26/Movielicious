@@ -21,6 +21,9 @@ public interface MovieDao {
     @Query("SELECT * from movie_table WHERE origin = 1 ORDER BY vote_average DESC")
     LiveData<List<Movie>> getTopRatedMovies();
 
+    @Query("SELECT * from movie_table WHERE origin = 2 ORDER BY title ASC")
+    LiveData<List<Movie>> getFavoriteMovies();
+
     @Query("SELECT * from movie_table WHERE id = :id")
     Movie getMovieById(int id);
 

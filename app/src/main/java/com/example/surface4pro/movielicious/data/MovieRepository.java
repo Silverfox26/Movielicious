@@ -12,12 +12,14 @@ public class MovieRepository {
     private MovieDao mMovieDao;
     private LiveData<List<Movie>> mMoviesMostPopular;
     private LiveData<List<Movie>> mMoviesTopRated;
+    private LiveData<List<Movie>> mMovieFavorites;
 
     public MovieRepository(Application application) {
         MovieRoomDatabase db = MovieRoomDatabase.getDatabase(application);
         mMovieDao = db.movieDao();
         mMoviesMostPopular = mMovieDao.getMostPopularMovies();
         mMoviesTopRated = mMovieDao.getTopRatedMovies();
+        mMovieFavorites = mMovieDao.getFavoriteMovies();
     }
 
     // Wrapper to get the list of movies
@@ -54,5 +56,9 @@ public class MovieRepository {
 
     public void deleteFavorite(int movieId) {
         mMovieDao.deleteFavorite(movieId);
+    }
+
+    public LiveData<List<Movie>> getFavoriteMovies() {
+        return mMovieFavorites;
     }
 }
