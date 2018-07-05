@@ -7,11 +7,15 @@ package com.example.surface4pro.movielicious.model;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
+
+import com.example.surface4pro.movielicious.Converters;
 
 /**
  * Class for custom Movie objects.
  */
 @Entity(tableName = "movie_table")
+@TypeConverters({Converters.class})
 public class Movie {
 
     @PrimaryKey(autoGenerate = true)

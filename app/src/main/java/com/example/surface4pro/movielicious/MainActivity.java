@@ -5,11 +5,14 @@
 package com.example.surface4pro.movielicious;
 
 import android.app.ActivityOptions;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,26 +25,28 @@ import android.widget.TextView;
 import com.example.surface4pro.movielicious.model.Movie;
 import com.example.surface4pro.movielicious.utilities.MovieDbJsonUtils;
 import com.example.surface4pro.movielicious.utilities.NetworkUtils;
+import com.facebook.stetho.Stetho;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
 
     private URL url = null;
 
-    private MovieAdapter mMovieAdapter;
     private RecyclerView mMoviesRecyclerView;
     private ProgressBar mLoadingIndicator;
     private TextView mErrorMessage;
     // Member variable declarations
-    private ArrayList<Movie> movies = null;
+    private List<Movie> movies = null;
+    private MovieViewModel mMovieViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Stetho.initializeWithDefaults(this);
         setContentView(R.layout.activity_main);
 
         // Initializing the View variables
@@ -61,19 +66,25 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         // Configuring the RecyclerView and setting its adapter
         mMoviesRecyclerView.setLayoutManager(layoutManager);
         mMoviesRecyclerView.setHasFixedSize(true);
-        mMovieAdapter = new MovieAdapter(this, movies);
+        final MovieAdapter mMovieAdapter = new MovieAdapter(this);
         mMoviesRecyclerView.setAdapter(mMovieAdapter);
 
-        // Fetching the movie data from the Internet
-        // or using the local data in savedInstanceState, if available
-        if (savedInstanceState == null || !savedInstanceState.containsKey(getString(R.string.saved_instance_movies))) {
-            loadMovieData(R.id.menu_most_popular);
-        } else {
-            movies = savedInstanceState.getParcelableArrayList(getString(R.string.saved_instance_movies));
-            if (movies != null) {
+        // The ViewModelProvider will create the ViewModel, when the app first starts.
+        // When the activity is destroyed (ex. configuration change), the ViewModel persists.
+        // When the activity is recreated, the Provider returns the existing ViewModel.
+        mMovieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
+
+        // Observer for the LiveData
+        mMovieViewModel.getMovies().observe(this, new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(@Nullable List<Movie> movies) {
+                // Update the cached copy of the movies in the Adapter.
                 mMovieAdapter.setMovieData(movies);
             }
-        }
+        });
+
+        loadMovieData(R.id.menu_most_popular, mMovieAdapter);
+
     }
 
     /**
@@ -98,18 +109,18 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
      * @param sortParam integer corresponding to the requested movie data
      *                  (possible values R.id.menu_most_popular and R.id.menu_highest_rated)
      */
-    private void loadMovieData(int sortParam) {
+    private void loadMovieData(int sortParam, MovieAdapter movieAdapter) {
         showMovieData();
         url = NetworkUtils.buildURL(sortParam);
-        new FetchMoviesTask(this).execute(url);
+        new FetchMoviesTask(this, movieAdapter).execute(url);
     }
 
     /**
-     * Save the movies ArrayList in the outState
+     * Save the movies List in the outState
      */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(getString(R.string.saved_instance_movies), movies);
+        //outState.putParcelableArrayList(getString(R.string.saved_instance_movies), movies);
         super.onSaveInstanceState(outState);
     }
 
@@ -126,10 +137,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         switch (itemThatWasClickedId) {
             case R.id.menu_most_popular:
-                loadMovieData(R.id.menu_most_popular);
+                //loadMovieData(R.id.menu_most_popular);
                 return true;
             case R.id.menu_top_rated:
-                loadMovieData(R.id.menu_top_rated);
+                //loadMovieData(R.id.menu_top_rated);
                 return true;
             case R.id.menu_favorites:
                 return true;
@@ -143,20 +154,22 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         Context context = this;
         Class destinationClass = DetailActivity.class;
         Intent startDetailActivityIntent = new Intent(context, destinationClass);
-        startDetailActivityIntent.putExtra(getString(R.string.extra_movie), movies.get(layoutPosition));
+        // startDetailActivityIntent.putExtra(getString(R.string.extra_movie), movies.get(layoutPosition));
 
         // Use SceneTransitionAnimation to start DetailActivity
         startActivity(startDetailActivityIntent, ActivityOptions.makeSceneTransitionAnimation(this, v.findViewById(R.id.iv_movie_poster), getString(R.string.transition_poster)).toBundle());
 
     }
 
-    private static class FetchMoviesTask extends AsyncTask<URL, Void, ArrayList<Movie>> {
+    private static class FetchMoviesTask extends AsyncTask<URL, Void, List<Movie>> {
 
         private final WeakReference<MainActivity> activityReference;
+        private final MovieAdapter movieAdapter;
 
         // only retain a weak reference to the activity
-        FetchMoviesTask(MainActivity context) {
+        FetchMoviesTask(MainActivity context, MovieAdapter movieAdapter) {
             activityReference = new WeakReference<>(context);
+            this.movieAdapter = movieAdapter;
         }
 
         @Override
@@ -171,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         }
 
         @Override
-        protected ArrayList<Movie> doInBackground(URL... urls) {
+        protected List<Movie> doInBackground(URL... urls) {
             // get a reference to the activity if it is still there
             MainActivity activity = activityReference.get();
             if (activity == null || activity.isFinishing()) return null;
@@ -191,16 +204,19 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Movie> movies) {
+        protected void onPostExecute(List<Movie> movies) {
             // get a reference to the activity if it is still there
             MainActivity activity = activityReference.get();
             if (activity == null || activity.isFinishing()) return;
 
             activity.mLoadingIndicator.setVisibility(View.INVISIBLE);
+
+            activity.mMovieViewModel.insertMovies(movies);
+
             if (movies != null) {
                 activity.showMovieData();
-                activity.mMovieAdapter.setMovieData(movies);
-                activity.mMoviesRecyclerView.scrollToPosition(0);
+//                movieAdapter.setMovieData(movies);
+//                activity.mMoviesRecyclerView.scrollToPosition(0);
             } else {
                 activity.showErrorMessage();
             }

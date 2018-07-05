@@ -8,15 +8,15 @@ import android.arch.persistence.room.Query;
 
 import com.example.surface4pro.movielicious.model.Movie;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Dao
 public interface MovieDao {
     @Query("SELECT * from movie_table ORDER BY id ASC")
-    ArrayList<Movie> getAllMovies();
+    List<Movie> getAllMovies();
 
-    @Query("SELECT * from movie_table WHERE origin = :origin ORDER BY id ASC")
-    LiveData<ArrayList<Movie>> getMoviesByOrigin(int origin);
+    @Query("SELECT * from movie_table WHERE origin = :origin ORDER BY popularity DESC")
+    LiveData<List<Movie>> getMoviesByOrigin(int origin);
 
     @Query("DELETE from movie_table WHERE origin = :origin")
     void deleteWithOrigin(int origin);
@@ -28,5 +28,5 @@ public interface MovieDao {
     void insertFavoriteMovie(Movie movie);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void bulkInsertMovies(Movie... movie);
+    void bulkInsertMovies(List<Movie> movies);
 }

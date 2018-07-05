@@ -85,7 +85,9 @@ public final class MovieDbJsonUtils {
                         video,
                         originalLanguage,
                         genreIds,
-                        onlyForAdults));
+                        onlyForAdults,
+                        //TODO CHANGE TO BE VARIABLE
+                        0));
             }
         } catch (JSONException e) {
             e.printStackTrace();

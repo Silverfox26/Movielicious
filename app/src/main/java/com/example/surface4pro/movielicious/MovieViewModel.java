@@ -7,12 +7,12 @@ import android.arch.lifecycle.LiveData;
 import com.example.surface4pro.movielicious.data.MovieRepository;
 import com.example.surface4pro.movielicious.model.Movie;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class MovieViewModel extends AndroidViewModel {
 
     private MovieRepository mRepository;
-    private LiveData<ArrayList<Movie>> mMovies;
+    private LiveData<List<Movie>> mMovies;
 
     public MovieViewModel(Application application) {
         super(application);
@@ -21,11 +21,11 @@ public class MovieViewModel extends AndroidViewModel {
     }
 
     // Getter Method to completely hide the implementation from the UI
-    public LiveData<ArrayList<Movie>> getMovies() {
+    public LiveData<List<Movie>> getMovies() {
         return mMovies;
     }
-    
-    public void insertMovies(Movie... movies) {
+
+    public void insertMovies(List<Movie> movies) {
         mRepository.insertMovies(movies);
     }
 }

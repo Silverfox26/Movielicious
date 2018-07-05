@@ -17,7 +17,7 @@ import com.example.surface4pro.movielicious.model.Movie;
 import com.example.surface4pro.movielicious.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * {@link MovieAdapter} exposes an ArrayList of movies to a
@@ -25,7 +25,8 @@ import java.util.ArrayList;
  */
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
-    private ArrayList<Movie> mMovieData;
+    // Cached copy of Movies
+    private List<Movie> mMovieData;
 
     // On-click handler to make it easy for an Activity to interface with the RecyclerView
     private final MovieAdapterOnClickHandler mClickHandler;
@@ -33,9 +34,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     /**
      * Creates a MovieAdapter.
      */
-    MovieAdapter(MovieAdapterOnClickHandler clickHandler, ArrayList<Movie> movies) {
+    MovieAdapter(MovieAdapterOnClickHandler clickHandler) {
         this.mClickHandler = clickHandler;
-        this.mMovieData = movies;
     }
 
     public interface MovieAdapterOnClickHandler {
@@ -128,7 +128,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
      *
      * @param movieData The new movie data to be displayed.
      */
-    public void setMovieData(ArrayList<Movie> movieData) {
+    public void setMovieData(List<Movie> movieData) {
         mMovieData = movieData;
         notifyDataSetChanged();
     }

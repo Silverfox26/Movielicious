@@ -7,7 +7,7 @@ import android.content.Context;
 
 import com.example.surface4pro.movielicious.model.Movie;
 
-@Database(entities = {Movie.class}, version = 1)
+@Database(entities = {Movie.class}, version = 1, exportSchema = false)
 public abstract class MovieRoomDatabase extends RoomDatabase {
     // Using the Singleton Pattern to make sure that only one instance of the database can
     // be opened at the same time.
