@@ -4,6 +4,7 @@
 
 package com.example.surface4pro.movielicious;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,8 @@ import com.squareup.picasso.Picasso;
 
 public class DetailActivity extends AppCompatActivity {
 
+    private MovieViewModel mMovieViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,20 +29,24 @@ public class DetailActivity extends AppCompatActivity {
         // Set exit transition
         getWindow().setEnterTransition(new Explode());
 
+        mMovieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
+
         // Get the intent, check its content, and populate the UI with its data
         Intent intent = getIntent();
         if (intent.hasExtra(getString(R.string.extra_movie))) {
-            Movie movie = intent.getParcelableExtra(getString(R.string.extra_movie));
-            populateUI(movie);
+            int movieId = intent.getIntExtra(getString(R.string.extra_movie), -1);
+            populateUI(movieId);
         }
     }
 
     /**
      * Populates the UI with the data from the passed in Movie object.
      *
-     * @param movie Movie object containing the movie data.
+     * @param movieId Movie id.
      */
-    private void populateUI(Movie movie) {
+    private void populateUI(int movieId) {
+
+        Movie movie = mMovieViewModel.getMovieById(movieId);
 
         // Declare and initialize View variables
         ImageView mPosterImageView = findViewById(R.id.iv_poster);

@@ -7,6 +7,7 @@ package com.example.surface4pro.movielicious;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +40,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     }
 
     public interface MovieAdapterOnClickHandler {
-        void onClick(View v, String clickedMovie, int layoutPosition);
+        void onClick(View v, int clickedMovieId, int layoutPosition);
     }
 
     /**
@@ -104,8 +105,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            String movieTitle = mMovieData.get(adapterPosition).getOriginalTitle();
-            mClickHandler.onClick(v, movieTitle, getAdapterPosition());
+            int id = mMovieData.get(adapterPosition).getId();
+            Log.d("AAA_ADAPTER", "onClick: " + id);
+            mClickHandler.onClick(v, id, getAdapterPosition());
 
         }
     }

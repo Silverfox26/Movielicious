@@ -16,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -189,11 +190,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     }
 
     @Override
-    public void onClick(View v, String clickedMovie, int layoutPosition) {
+    public void onClick(View v, int clickedMovieId, int layoutPosition) {
         Context context = this;
         Class destinationClass = DetailActivity.class;
         Intent startDetailActivityIntent = new Intent(context, destinationClass);
         // startDetailActivityIntent.putExtra(getString(R.string.extra_movie), movies.get(layoutPosition));
+        startDetailActivityIntent.putExtra(getString(R.string.extra_movie), clickedMovieId);
+        Log.d("AAA", "onClick: " + clickedMovieId);
 
         // Use SceneTransitionAnimation to start DetailActivity
         startActivity(startDetailActivityIntent, ActivityOptions.makeSceneTransitionAnimation(this, v.findViewById(R.id.iv_movie_poster), getString(R.string.transition_poster)).toBundle());

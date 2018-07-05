@@ -6,6 +6,7 @@ package com.example.surface4pro.movielicious.model;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 
@@ -51,6 +52,43 @@ public class Movie {
     /**
      * Movie constructor.
      *
+     * @param movieId               Id of the movie.
+     * @param title            Title of the movie.
+     * @param originalTitle    Original Title of the movie.
+     * @param voteCount        Number of votes the movie received.
+     * @param voteAverage      Average rating the movie got.
+     * @param releaseDate      Release date of the movie.
+     * @param description      Description of the movie.
+     * @param popularity       Popularity rank of the movie.
+     * @param posterPath       Path to the poster image.
+     * @param backdropPath     Path to the backdrop image.
+     * @param video            Has video?
+     * @param originalLanguage Original language of the movie.
+     * @param genreIds         Array of int ids refereing to the genres.
+     * @param onlyForAdults    Is only for adults?
+     */
+    @Ignore
+    public Movie(int movieId, String title, String originalTitle, int voteCount, int voteAverage, String releaseDate, String description, int popularity, String posterPath, String backdropPath, boolean video, String originalLanguage, int[] genreIds, boolean onlyForAdults, int origin) {
+        this.movieId = movieId;
+        this.title = title;
+        this.originalTitle = originalTitle;
+        this.voteCount = voteCount;
+        this.voteAverage = voteAverage;
+        this.releaseDate = releaseDate;
+        this.description = description;
+        this.popularity = popularity;
+        this.posterPath = posterPath;
+        this.backdropPath = backdropPath;
+        this.video = video;
+        this.originalLanguage = originalLanguage;
+        this.genreIds = genreIds;
+        this.onlyForAdults = onlyForAdults;
+        this.origin = origin;
+    }
+
+    /**
+     * Movie constructor.
+     *
      * @param id               Id of the movie.
      * @param title            Title of the movie.
      * @param originalTitle    Original Title of the movie.
@@ -66,8 +104,9 @@ public class Movie {
      * @param genreIds         Array of int ids refereing to the genres.
      * @param onlyForAdults    Is only for adults?
      */
-    public Movie(int id, String title, String originalTitle, int voteCount, int voteAverage, String releaseDate, String description, int popularity, String posterPath, String backdropPath, boolean video, String originalLanguage, int[] genreIds, boolean onlyForAdults, int origin) {
-        this.movieId = id;
+    public Movie(int id, int movieId, String title, String originalTitle, int voteCount, int voteAverage, String releaseDate, String description, int popularity, String posterPath, String backdropPath, boolean video, String originalLanguage, int[] genreIds, boolean onlyForAdults, int origin) {
+        this.id = id;
+        this.movieId = movieId;
         this.title = title;
         this.originalTitle = originalTitle;
         this.voteCount = voteCount;

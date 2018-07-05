@@ -37,4 +37,8 @@ public class MovieViewModel extends AndroidViewModel {
     public void deleteWithOrigin(int origin) {
         mRepository.deleteWithOrigin(origin);
     }
+
+    public Movie getMovieById(int id) {
+        return mRepository.getMovieById(id);
+    }
 }

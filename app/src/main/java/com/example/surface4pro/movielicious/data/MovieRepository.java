@@ -39,4 +39,8 @@ public class MovieRepository {
     public void deleteWithOrigin(int origin) {
         mMovieDao.deleteWithOrigin(origin);
     }
+
+    public Movie getMovieById(int id) {
+        return mMovieDao.getMovieById(id);
+    }
 }

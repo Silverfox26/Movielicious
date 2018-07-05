@@ -21,6 +21,9 @@ public interface MovieDao {
     @Query("SELECT * from movie_table WHERE origin = 1 ORDER BY vote_average DESC")
     LiveData<List<Movie>> getTopRatedMovies();
 
+    @Query("SELECT * from movie_table WHERE id = :id")
+    Movie getMovieById(int id);
+
     @Query("DELETE from movie_table WHERE origin = :origin")
     void deleteWithOrigin(int origin);
 
