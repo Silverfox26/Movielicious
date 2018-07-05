@@ -8,6 +8,8 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.Explode;
 import android.util.Log;
@@ -34,6 +36,8 @@ public class DetailActivity extends AppCompatActivity {
     private MovieViewModel mMovieViewModel;
     private List<Review> mReviews;
 
+    private SharedDetailViewModel sharedViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +54,20 @@ public class DetailActivity extends AppCompatActivity {
             int movieId = intent.getIntExtra(getString(R.string.extra_movie), -1);
             populateUI(movieId);
         }
+
+        // Find the view pager that will allow the user to swipe between fragments
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+
+        // Create an adapter that knows which fragment should be shown on each page
+        DetailViewFragmentPagerAdapter adapter = new DetailViewFragmentPagerAdapter(this, getSupportFragmentManager());
+
+        // Set the adapter onto the view pager
+        viewPager.setAdapter(adapter);
+
+        // Give the TabLayout the ViewPager
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        tabLayout.setupWithViewPager(viewPager);
+
     }
 
     /**
@@ -61,6 +79,9 @@ public class DetailActivity extends AppCompatActivity {
 
         final Movie movie = mMovieViewModel.getMovieById(movieId);
 
+        sharedViewModel = ViewModelProviders.of(DetailActivity.this).get(SharedDetailViewModel.class);
+        sharedViewModel.select(movie);
+
         // Declare and initialize View variables
         ImageView mPosterImageView = findViewById(R.id.iv_poster);
         TextView mTitleTextView = findViewById(R.id.tv_title);
@@ -68,7 +89,6 @@ public class DetailActivity extends AppCompatActivity {
         RatingBar mRatingRatingBar = findViewById(R.id.rb_rating);
         TextView mVotesTextView = findViewById(R.id.tv_votes);
         TextView mGenreTextView = findViewById(R.id.tv_genre);
-        TextView mDescriptionTextView = findViewById(R.id.tv_description);
         Switch mFavoriteSwitch = findViewById(R.id.sw_favorite);
 
         // Set the ActionBar Title to the movie's title
@@ -86,7 +106,6 @@ public class DetailActivity extends AppCompatActivity {
         mYearTextView.setText(movie.getReleaseDate().substring(0, 4));
         mRatingRatingBar.setRating(movie.getVoteAverage() / 2f);
         mVotesTextView.setText(getResources().getString(R.string.number_of_votes, String.valueOf(movie.getVoteCount())));
-        mDescriptionTextView.setText(movie.getDescription());
 
         // Convert the genre id's to their corresponding names and
         // concatenate them using a StringBuilder
