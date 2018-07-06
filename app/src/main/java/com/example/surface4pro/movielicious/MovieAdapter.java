@@ -84,7 +84,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     }
 
     /**
-     * Cache of the children views for a forecast list item.
+     * Cache of the children views for a movie list item.
      */
     public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         final ImageView mMovieImageView;

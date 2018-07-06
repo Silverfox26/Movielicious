@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.example.surface4pro.movielicious.data.MovieRoomDatabase;
 import com.example.surface4pro.movielicious.model.Movie;
 import com.example.surface4pro.movielicious.model.Review;
+import com.example.surface4pro.movielicious.model.Video;
 import com.example.surface4pro.movielicious.utilities.MovieDbJsonUtils;
 import com.example.surface4pro.movielicious.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
@@ -34,7 +35,6 @@ import java.util.List;
 public class DetailActivity extends AppCompatActivity {
 
     private MovieViewModel mMovieViewModel;
-    private List<Review> mReviews;
 
     private SharedDetailViewModel sharedViewModel;
 
@@ -202,6 +202,8 @@ public class DetailActivity extends AppCompatActivity {
         new FetchReviewsTask(this).execute(reviewUrl);
 
         Log.d("AAA", "populateUI: " + NetworkUtils.buildVideoURL(movie.getMovieId()));
+        URL videowUrl = NetworkUtils.buildVideoURL(movie.getMovieId());
+        new FetchVideosTask(this).execute(videowUrl);
     }
 
     private static class FetchReviewsTask extends AsyncTask<URL, Void, List<Review>> {
@@ -236,9 +238,7 @@ public class DetailActivity extends AppCompatActivity {
                 return null;
             }
 
-            activity.mReviews = MovieDbJsonUtils.getReviewDataFromJson(reviewQueryResults);
-
-            return activity.mReviews;
+            return MovieDbJsonUtils.getReviewDataFromJson(reviewQueryResults);
         }
 
         @Override
@@ -248,6 +248,52 @@ public class DetailActivity extends AppCompatActivity {
             if (activity == null || activity.isFinishing()) return;
 
             activity.sharedViewModel.saveReviewList(reviews);
+        }
+    }
+
+
+    private static class FetchVideosTask extends AsyncTask<URL, Void, List<Video>> {
+
+        private final WeakReference<DetailActivity> activityReference;
+
+        // only retain a weak reference to the activity
+        FetchVideosTask(DetailActivity context) {
+            activityReference = new WeakReference<>(context);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // get a reference to the activity if it is still there
+            DetailActivity activity = activityReference.get();
+            if (activity == null || activity.isFinishing()) return;
+        }
+
+        @Override
+        protected List<Video> doInBackground(URL... urls) {
+            // get a reference to the activity if it is still there
+            DetailActivity activity = activityReference.get();
+            if (activity == null || activity.isFinishing()) return null;
+
+            URL queryUrl = urls[0];
+            String videoQueryResults;
+            try {
+                videoQueryResults = NetworkUtils.getResponseFromHttpUrl(queryUrl);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+            return MovieDbJsonUtils.getVideoDataFromJson(videoQueryResults);
+        }
+
+        @Override
+        protected void onPostExecute(List<Video> videos) {
+            // get a reference to the activity if it is still there
+            DetailActivity activity = activityReference.get();
+            if (activity == null || activity.isFinishing()) return;
+
+            activity.sharedViewModel.saveVideoList(videos);
         }
     }
 }

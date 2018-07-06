@@ -6,19 +6,19 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.example.surface4pro.movielicious.model.Review;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ReviewFragment extends Fragment {
-
+    private RecyclerView mReviewsRecyclerView;
+    private ReviewAdapter mAdapter;
 
     public ReviewFragment() {
         // Required empty public constructor
@@ -46,17 +46,28 @@ public class ReviewFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        TextView reviewTextView = view.findViewById(R.id.tv_review_fragment);
+        // Initializing the View variables
+        mReviewsRecyclerView = view.findViewById(R.id.rv_review_fragment);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        mReviewsRecyclerView.setLayoutManager(layoutManager);
+        mReviewsRecyclerView.setHasFixedSize(false);
+        mAdapter = new ReviewAdapter();
+        mReviewsRecyclerView.setAdapter(mAdapter);
+
+        // TextView reviewTextView = view.findViewById(R.id.tv_review_fragment);
 
         SharedDetailViewModel sharedViewModel = ViewModelProviders.of(getActivity()).get(SharedDetailViewModel.class);
         sharedViewModel.getSavedReviewList().observe(this, reviewList -> {
-            StringBuilder reviewString = new StringBuilder();
-            for (Review review : reviewList) {
-                reviewString.append(review.getAuthor());
-                reviewString.append("\n");
-                reviewString.append(review.getContent());
-            }
-            reviewTextView.setText(reviewString.toString());
+
+            mAdapter.setReviewData(reviewList);
+//            StringBuilder reviewString = new StringBuilder();
+//            for (Review review : reviewList) {
+//                reviewString.append(review.getAuthor());
+//                reviewString.append("\n");
+//                reviewString.append(review.getContent());
+//                reviewString.append("\n\n");
+//            }
+//            reviewTextView.setText(reviewString.toString());
         });
     }
 }
