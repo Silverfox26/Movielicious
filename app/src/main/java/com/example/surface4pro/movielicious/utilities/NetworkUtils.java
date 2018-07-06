@@ -37,7 +37,12 @@ public final class NetworkUtils {
     private final static String PATH_IMAGE_WIDTH = "w342";
 
     private final static String YOUTUBE_PREVIEW_IMAGE_BASE_URL = "https://img.youtube.com/vi";
-    private final static String YOUTUBE_PREVIW_IMAGE_FILE = "0.jpg";
+    private final static String YOUTUBE_PREVIEW_IMAGE_FILE = "0.jpg";
+
+    private final static String YOUTUBE_VIDEO_BASE_URL = "https://www.youtube.com/watch";
+    private final static String YOUTUBE_VIDEO_PARAM_QUERY = "v";
+
+    private final static String YOUTUBE_VIDEO_APP_BASE_URL = "vnd.youtube:";
 
     /**
      * Builds the MovieDatabase API request URL based in the passe in sort parameter.
@@ -157,10 +162,41 @@ public final class NetworkUtils {
     public static String buildVideoImageUrl(String videoKey) {
         Uri builtUri = Uri.parse(YOUTUBE_PREVIEW_IMAGE_BASE_URL).buildUpon()
                 .appendPath(videoKey)
-                .appendEncodedPath(YOUTUBE_PREVIW_IMAGE_FILE)
+                .appendEncodedPath(YOUTUBE_PREVIEW_IMAGE_FILE)
                 .build();
 
         return builtUri.toString();
+    }
+
+    /**
+     * Builds the MovieDatabase API Review request URL based on the passed in movieId.
+     *
+     * @param videoId id of the selected movie
+     * @return build URL
+     */
+    public static Uri buildYouTubeVideoURI(String videoId) {
+
+        /* Building the API request URL */
+        Uri builtUri = null;
+
+        builtUri = Uri.parse(YOUTUBE_VIDEO_BASE_URL).buildUpon()
+                .appendQueryParameter(YOUTUBE_VIDEO_PARAM_QUERY, videoId)
+                .build();
+
+        return builtUri;
+    }
+
+    /**
+     * Builds the MovieDatabase API Review request URL based on the passed in movieId.
+     *
+     * @param videoId id of the selected movie
+     * @return build URL
+     */
+    public static Uri buildYouTubeAppVideoURI(String videoId) {
+
+        /* Building the API request URL */
+
+        return Uri.parse(YOUTUBE_VIDEO_APP_BASE_URL + videoId);
     }
 
     /**

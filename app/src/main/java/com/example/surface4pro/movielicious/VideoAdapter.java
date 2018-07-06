@@ -3,6 +3,7 @@ package com.example.surface4pro.movielicious;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +22,18 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     // Cached copy of Videos
     private List<Video> mVideoData;
 
+    // On-click handler to make it easy for an Activity to interface with the RecyclerView
+    private final VideoAdapterOnClickHandler mClickHandler;
+
     /**
      * Creates a ReviewAdapter.
      */
-    public VideoAdapter() {
+    public VideoAdapter(VideoAdapterOnClickHandler clickHandler) {
+        this.mClickHandler = clickHandler;
+    }
+
+    public interface VideoAdapterOnClickHandler {
+        void onClick(View v, String clickedVideoKey, int layoutPosition);
     }
 
     /**
@@ -118,7 +127,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     /**
      * Cache of the children views for a video list item.
      */
-    public class VideoViewHolder extends RecyclerView.ViewHolder {
+    public class VideoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         final ImageView mVideoImage;
         final TextView mVideoName;
         final TextView mVideoType;
@@ -128,6 +137,22 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             mVideoImage = itemView.findViewById(R.id.iv_video_image);
             mVideoName = itemView.findViewById(R.id.tv_video_name);
             mVideoType = itemView.findViewById(R.id.tv_video_type);
+
+            itemView.setOnClickListener(this);
+        }
+
+        /**
+         * Called when a view has been clicked.
+         *
+         * @param v The view that was clicked.
+         */
+        @Override
+        public void onClick(View v) {
+            int adapterPosition = getAdapterPosition();
+            String videoKey = mVideoData.get(adapterPosition).getKey();
+            Log.d("AAA_ADAPTER", "onClick: " + videoKey);
+            mClickHandler.onClick(v, videoKey, getAdapterPosition());
+
         }
     }
 }

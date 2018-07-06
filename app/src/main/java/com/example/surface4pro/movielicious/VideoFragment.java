@@ -2,21 +2,27 @@ package com.example.surface4pro.movielicious;
 
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.surface4pro.movielicious.utilities.NetworkUtils;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class VideoFragment extends Fragment {
+public class VideoFragment extends Fragment implements VideoAdapter.VideoAdapterOnClickHandler {
     private RecyclerView mVideosRecyclerView;
     private VideoAdapter mAdapter;
 
@@ -51,7 +57,7 @@ public class VideoFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mVideosRecyclerView.setLayoutManager(layoutManager);
         mVideosRecyclerView.setHasFixedSize(false);
-        mAdapter = new VideoAdapter();
+        mAdapter = new VideoAdapter(this);
         mVideosRecyclerView.setAdapter(mAdapter);
 
         // TextView videoTextView = view.findViewById(R.id.tv_videos_fragment);
@@ -75,5 +81,23 @@ public class VideoFragment extends Fragment {
 //            videoTextView.setText(videoString.toString());
 //        });
         });
+    }
+
+    @Override
+    public void onClick(View v, String videoKey, int layoutPosition) {
+
+        Uri webUri = NetworkUtils.buildYouTubeVideoURI(videoKey);
+        Uri appUri = NetworkUtils.buildYouTubeAppVideoURI(videoKey);
+
+        Log.d("AAA", "onClick: " + appUri);
+        Log.d("AAA", "onClick: " + webUri);
+
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, appUri);
+        Intent webIntent = new Intent(Intent.ACTION_VIEW, webUri);
+        try {
+            startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            startActivity(webIntent);
+        }
     }
 }
