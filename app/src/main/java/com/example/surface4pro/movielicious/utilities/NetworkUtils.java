@@ -36,6 +36,9 @@ public final class NetworkUtils {
     private final static String MOVIEDB_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
     private final static String PATH_IMAGE_WIDTH = "w342";
 
+    private final static String YOUTUBE_PREVIEW_IMAGE_BASE_URL = "https://img.youtube.com/vi";
+    private final static String YOUTUBE_PREVIW_IMAGE_FILE = "0.jpg";
+
     /**
      * Builds the MovieDatabase API request URL based in the passe in sort parameter.
      *
@@ -140,6 +143,21 @@ public final class NetworkUtils {
         Uri builtUri = Uri.parse(MOVIEDB_IMAGE_BASE_URL).buildUpon()
                 .appendPath(PATH_IMAGE_WIDTH)
                 .appendEncodedPath(movieImagePath)
+                .build();
+
+        return builtUri.toString();
+    }
+
+    /**
+     * Builds the movie poster URL.
+     *
+     * @param videoKey the path to the movie poster
+     * @return build mage URL
+     */
+    public static String buildVideoImageUrl(String videoKey) {
+        Uri builtUri = Uri.parse(YOUTUBE_PREVIEW_IMAGE_BASE_URL).buildUpon()
+                .appendPath(videoKey)
+                .appendEncodedPath(YOUTUBE_PREVIW_IMAGE_FILE)
                 .build();
 
         return builtUri.toString();
