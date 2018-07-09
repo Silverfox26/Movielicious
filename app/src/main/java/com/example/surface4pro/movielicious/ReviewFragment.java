@@ -2,17 +2,17 @@ package com.example.surface4pro.movielicious;
 
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+
+import com.example.surface4pro.movielicious.databinding.FragmentReviewBinding;
 
 import java.util.Objects;
 
@@ -21,11 +21,11 @@ import java.util.Objects;
  * A simple {@link Fragment} subclass.
  */
 public class ReviewFragment extends Fragment {
-    private RecyclerView mReviewsRecyclerView;
+
+    // Create a data binding instance called mBinding of type ActivityMainBinding
+    FragmentReviewBinding mBinding;
+
     private ReviewAdapter mAdapter;
-    private ProgressBar mLoadingIndicator;
-    private TextView mErrorMessage;
-    private TextView mNoReviewsAvailableMessage;
 
     public ReviewFragment() {
         // Required empty public constructor
@@ -33,10 +33,13 @@ public class ReviewFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_review, container, false);
+
+        // Set the Content View using DataBindingUtil to the activity_main layout
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_review, container, false);
+
+        return mBinding.getRoot();
     }
 
     /**
@@ -53,18 +56,11 @@ public class ReviewFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Initializing the View variables
-        mErrorMessage = view.findViewById(R.id.tv_error_message_review);
-        mLoadingIndicator = view.findViewById(R.id.pb_loading_indicator_reviews);
-        mNoReviewsAvailableMessage = view.findViewById(R.id.tv_no_reviews_message);
-
-
-        mReviewsRecyclerView = view.findViewById(R.id.rv_review_fragment);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        mReviewsRecyclerView.setLayoutManager(layoutManager);
-        mReviewsRecyclerView.setHasFixedSize(false);
+        mBinding.rvReviewFragment.setLayoutManager(layoutManager);
+        mBinding.rvReviewFragment.setHasFixedSize(false);
         mAdapter = new ReviewAdapter();
-        mReviewsRecyclerView.setAdapter(mAdapter);
+        mBinding.rvReviewFragment.setAdapter(mAdapter);
 
 
         SharedDetailViewModel sharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(SharedDetailViewModel.class);
@@ -73,17 +69,17 @@ public class ReviewFragment extends Fragment {
             if (loadingStatus != null) {
                 if (loadingStatus == 1) {
                     // show loading indicator
-                    mLoadingIndicator.setVisibility(View.VISIBLE);
+                    mBinding.pbLoadingIndicatorReviews.setVisibility(View.VISIBLE);
                 } else if (loadingStatus == 2) {
                     // show recycler view
                     showReviewData();
-                    mLoadingIndicator.setVisibility(View.INVISIBLE);
+                    mBinding.pbLoadingIndicatorReviews.setVisibility(View.INVISIBLE);
                 } else if (loadingStatus == -1) {
                     showErrorMessage();
-                    mLoadingIndicator.setVisibility(View.INVISIBLE);
+                    mBinding.pbLoadingIndicatorReviews.setVisibility(View.INVISIBLE);
                 } else if (loadingStatus == 0) {
                     showNoReviewMessage();
-                    mLoadingIndicator.setVisibility(View.INVISIBLE);
+                    mBinding.pbLoadingIndicatorReviews.setVisibility(View.INVISIBLE);
                 }
             }
         });
@@ -99,26 +95,26 @@ public class ReviewFragment extends Fragment {
      * This method sets the RecyclerView invisible and shows the error message
      */
     private void showErrorMessage() {
-        mReviewsRecyclerView.setVisibility(View.INVISIBLE);
-        mErrorMessage.setVisibility(View.VISIBLE);
-        mNoReviewsAvailableMessage.setVisibility(View.INVISIBLE);
+        mBinding.rvReviewFragment.setVisibility(View.INVISIBLE);
+        mBinding.tvErrorMessageReview.setVisibility(View.VISIBLE);
+        mBinding.tvNoReviewsMessage.setVisibility(View.INVISIBLE);
     }
 
     /**
      * This method shows the RecyclerView and hides the error message
      */
     private void showReviewData() {
-        mReviewsRecyclerView.setVisibility(View.VISIBLE);
-        mErrorMessage.setVisibility(View.INVISIBLE);
-        mNoReviewsAvailableMessage.setVisibility(View.INVISIBLE);
+        mBinding.rvReviewFragment.setVisibility(View.VISIBLE);
+        mBinding.tvErrorMessageReview.setVisibility(View.INVISIBLE);
+        mBinding.tvNoReviewsMessage.setVisibility(View.INVISIBLE);
     }
 
     /**
      * This method shows the RecyclerView and hides the error message
      */
     private void showNoReviewMessage() {
-        mReviewsRecyclerView.setVisibility(View.INVISIBLE);
-        mErrorMessage.setVisibility(View.INVISIBLE);
-        mNoReviewsAvailableMessage.setVisibility(View.VISIBLE);
+        mBinding.rvReviewFragment.setVisibility(View.INVISIBLE);
+        mBinding.tvErrorMessageReview.setVisibility(View.INVISIBLE);
+        mBinding.tvNoReviewsMessage.setVisibility(View.VISIBLE);
     }
 }

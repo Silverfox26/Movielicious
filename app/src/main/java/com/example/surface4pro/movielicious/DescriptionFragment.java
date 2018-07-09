@@ -2,6 +2,7 @@ package com.example.surface4pro.movielicious;
 
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,7 +10,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
+import com.example.surface4pro.movielicious.databinding.FragmentDescriptionBinding;
+
+import java.util.Objects;
 
 
 /**
@@ -17,16 +21,21 @@ import android.widget.TextView;
  */
 public class DescriptionFragment extends Fragment {
 
+    // Create a data binding instance called mBinding of type ActivityMainBinding
+    FragmentDescriptionBinding mBinding;
 
     public DescriptionFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_description, container, false);
+
+        // Set the Content View using DataBindingUtil to the activity_main layout
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_description, container, false);
+
+        return mBinding.getRoot();
     }
 
     /**
@@ -42,11 +51,9 @@ public class DescriptionFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        TextView descriptionTextView = view.findViewById(R.id.tv_description_fragment);
 
-        SharedDetailViewModel sharedViewModel = ViewModelProviders.of(getActivity()).get(SharedDetailViewModel.class);
-        sharedViewModel.getSavedMovie().observe(this, movie -> {
-            descriptionTextView.setText(movie.getDescription());
-        });
+        SharedDetailViewModel sharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(SharedDetailViewModel.class);
+        sharedViewModel.getSavedMovie().observe(this, movie ->
+                mBinding.tvDescriptionFragment.setText(Objects.requireNonNull(movie).getDescription()));
     }
 }

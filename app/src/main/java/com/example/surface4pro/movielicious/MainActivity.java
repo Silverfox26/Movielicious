@@ -10,20 +10,19 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.example.surface4pro.movielicious.data.MovieRoomDatabase;
+import com.example.surface4pro.movielicious.databinding.ActivityMainBinding;
 import com.example.surface4pro.movielicious.model.Movie;
 import com.example.surface4pro.movielicious.utilities.AppExecutors;
 import com.example.surface4pro.movielicious.utilities.MovieDbJsonUtils;
@@ -38,12 +37,11 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
 
+    // Create a data binding instance called mBinding of type ActivityMainBinding
+    ActivityMainBinding mBinding;
+
     private URL url = null;
 
-    //private MovieAdapter mMovieAdapter;
-    private RecyclerView mMoviesRecyclerView;
-    private ProgressBar mLoadingIndicator;
-    private TextView mErrorMessage;
     // Member variable declarations
     private List<Movie> movies = null;
     private MovieViewModel mMovieViewModel;
@@ -55,13 +53,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Stetho.initializeWithDefaults(this);
-        setContentView(R.layout.activity_main);
 
-        // Initializing the View variables
-        mMoviesRecyclerView = findViewById(R.id.rv_movies);
-        mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
-        mErrorMessage = findViewById(R.id.tv_error_message);
+        Stetho.initializeWithDefaults(this);
+
+        // Set the Content View using DataBindingUtil to the activity_main layout
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         // Setting the span count for the GridLayoutManager based on the device's orientation
         int value = this.getResources().getConfiguration().orientation;
@@ -73,10 +69,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         }
 
         // Configuring the RecyclerView and setting its adapter
-        mMoviesRecyclerView.setLayoutManager(layoutManager);
-        mMoviesRecyclerView.setHasFixedSize(true);
+        mBinding.rvMovies.setLayoutManager(layoutManager);
+        mBinding.rvMovies.setHasFixedSize(true);
         final MovieAdapter movieAdapter = new MovieAdapter(this);
-        mMoviesRecyclerView.setAdapter(movieAdapter);
+        mBinding.rvMovies.setAdapter(movieAdapter);
 
         // The ViewModelProvider will create the ViewModel, when the app first starts.
         // When the activity is destroyed (ex. configuration change), the ViewModel persists.
@@ -121,16 +117,16 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
      * This method sets the RecyclerView invisible and shows the error message
      */
     private void showErrorMessage() {
-        mMoviesRecyclerView.setVisibility(View.INVISIBLE);
-        mErrorMessage.setVisibility(View.VISIBLE);
+        mBinding.rvMovies.setVisibility(View.INVISIBLE);
+        mBinding.tvErrorMessage.setVisibility(View.VISIBLE);
     }
 
     /**
      * This method shows the RecyclerView and hides the error message
      */
     private void showMovieData() {
-        mMoviesRecyclerView.setVisibility(View.VISIBLE);
-        mErrorMessage.setVisibility(View.INVISIBLE);
+        mBinding.rvMovies.setVisibility(View.VISIBLE);
+        mBinding.tvErrorMessage.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -171,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 selection = 0;
                 removeObservers();
                 mMovieViewModel.getMostPopularMovies().observe(this, mObserver);
-                mMoviesRecyclerView.smoothScrollToPosition(0);
+                mBinding.rvMovies.smoothScrollToPosition(0);
                 if (NetworkStatus.isOnline(this)) {
                     deleteMoviesByOrigin(MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
                     loadMovieData(R.id.menu_most_popular, MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
@@ -181,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 selection = 1;
                 removeObservers();
                 mMovieViewModel.getTopRatedMovies().observe(this, mObserver);
-                mMoviesRecyclerView.smoothScrollToPosition(0);
+                mBinding.rvMovies.smoothScrollToPosition(0);
                 if (NetworkStatus.isOnline(this)) {
                     deleteMoviesByOrigin(MovieRoomDatabase.ORIGIN_ID_TOP_RATED);
                     loadMovieData(R.id.menu_top_rated, MovieRoomDatabase.ORIGIN_ID_TOP_RATED);
@@ -191,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 selection = 2;
                 removeObservers();
                 mMovieViewModel.getFavoriteMovies().observe(this, mObserver);
-                mMoviesRecyclerView.smoothScrollToPosition(0);
+                mBinding.rvMovies.smoothScrollToPosition(0);
                 return true;
         }
 
@@ -237,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             if (activity == null || activity.isFinishing()) return;
 
             activity.showMovieData();
-            activity.mLoadingIndicator.setVisibility(View.VISIBLE);
+            activity.mBinding.pbLoadingIndicator.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -266,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             MainActivity activity = activityReference.get();
             if (activity == null || activity.isFinishing()) return;
 
-            activity.mLoadingIndicator.setVisibility(View.INVISIBLE);
+            activity.mBinding.pbLoadingIndicator.setVisibility(View.INVISIBLE);
 
             AppExecutors.getInstance().diskIO().execute(new Runnable() {
 
@@ -276,11 +272,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 }
             });
 
-
             if (movies != null) {
                 activity.showMovieData();
-//                mMovieAdapter.setMovieData(movies);
-//                activity.mMoviesRecyclerView.scrollToPosition(0);
             } else {
                 activity.showErrorMessage();
             }
