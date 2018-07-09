@@ -66,9 +66,9 @@ public class DetailActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            populateUI(movie);
                             sharedViewModel = ViewModelProviders.of(DetailActivity.this).get(SharedDetailViewModel.class);
                             sharedViewModel.saveMovie(movie);
+                            populateUI(movie);
                         }
                     });
                 }
@@ -113,12 +113,6 @@ public class DetailActivity extends AppCompatActivity {
         TextView mVotesTextView = findViewById(R.id.tv_votes);
         TextView mGenreTextView = findViewById(R.id.tv_genre);
         ToggleButton mFavoriteButton = findViewById(R.id.tb_favorite);
-
-/*        // Set the ActionBar Title to the movie's title
-        android.support.v7.app.ActionBar ab = getSupportActionBar();
-        if (ab != null) {
-            ab.setTitle(movie.getTitle());
-        }*/
 
         // Create the image URL and display it using Picasso
         String url = NetworkUtils.buildImageUrl(movie.getPosterPath());
@@ -260,6 +254,8 @@ public class DetailActivity extends AppCompatActivity {
             // get a reference to the activity if it is still there
             DetailActivity activity = activityReference.get();
             if (activity == null || activity.isFinishing()) return;
+
+            activity.sharedViewModel.setLoadingStatusReviews(1);
         }
 
         @Override
@@ -286,7 +282,14 @@ public class DetailActivity extends AppCompatActivity {
             DetailActivity activity = activityReference.get();
             if (activity == null || activity.isFinishing()) return;
 
-            activity.sharedViewModel.saveReviewList(reviews);
+            if (reviews == null) {
+                activity.sharedViewModel.setLoadingStatusReviews(-1);
+            } else if (reviews.isEmpty()) {
+                activity.sharedViewModel.setLoadingStatusReviews(0);
+            } else {
+                activity.sharedViewModel.saveReviewList(reviews);
+                activity.sharedViewModel.setLoadingStatusReviews(2);
+            }
         }
     }
 
@@ -306,6 +309,8 @@ public class DetailActivity extends AppCompatActivity {
             // get a reference to the activity if it is still there
             DetailActivity activity = activityReference.get();
             if (activity == null || activity.isFinishing()) return;
+
+            activity.sharedViewModel.setLoadingStatusVideo(1);
         }
 
         @Override
@@ -332,7 +337,14 @@ public class DetailActivity extends AppCompatActivity {
             DetailActivity activity = activityReference.get();
             if (activity == null || activity.isFinishing()) return;
 
-            activity.sharedViewModel.saveVideoList(videos);
+            if (videos == null) {
+                activity.sharedViewModel.setLoadingStatusVideo(-1);
+            } else if (videos.isEmpty()) {
+                activity.sharedViewModel.setLoadingStatusVideo(0);
+            } else {
+                activity.sharedViewModel.saveVideoList(videos);
+                activity.sharedViewModel.setLoadingStatusVideo(2);
+            }
         }
     }
 }

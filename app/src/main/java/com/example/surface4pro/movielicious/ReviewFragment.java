@@ -11,6 +11,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import java.util.Objects;
 
 
 /**
@@ -19,6 +23,9 @@ import android.view.ViewGroup;
 public class ReviewFragment extends Fragment {
     private RecyclerView mReviewsRecyclerView;
     private ReviewAdapter mAdapter;
+    private ProgressBar mLoadingIndicator;
+    private TextView mErrorMessage;
+    private TextView mNoReviewsAvailableMessage;
 
     public ReviewFragment() {
         // Required empty public constructor
@@ -47,6 +54,11 @@ public class ReviewFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Initializing the View variables
+        mErrorMessage = view.findViewById(R.id.tv_error_message_review);
+        mLoadingIndicator = view.findViewById(R.id.pb_loading_indicator_reviews);
+        mNoReviewsAvailableMessage = view.findViewById(R.id.tv_no_reviews_message);
+
+
         mReviewsRecyclerView = view.findViewById(R.id.rv_review_fragment);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mReviewsRecyclerView.setLayoutManager(layoutManager);
@@ -54,20 +66,59 @@ public class ReviewFragment extends Fragment {
         mAdapter = new ReviewAdapter();
         mReviewsRecyclerView.setAdapter(mAdapter);
 
-        // TextView reviewTextView = view.findViewById(R.id.tv_review_fragment);
 
-        SharedDetailViewModel sharedViewModel = ViewModelProviders.of(getActivity()).get(SharedDetailViewModel.class);
+        SharedDetailViewModel sharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(SharedDetailViewModel.class);
+
+        sharedViewModel.getLoadingStatusReviews().observe(this, (Integer loadingStatus) -> {
+            if (loadingStatus != null) {
+                if (loadingStatus == 1) {
+                    // show loading indicator
+                    mLoadingIndicator.setVisibility(View.VISIBLE);
+                } else if (loadingStatus == 2) {
+                    // show recycler view
+                    showReviewData();
+                    mLoadingIndicator.setVisibility(View.INVISIBLE);
+                } else if (loadingStatus == -1) {
+                    showErrorMessage();
+                    mLoadingIndicator.setVisibility(View.INVISIBLE);
+                } else if (loadingStatus == 0) {
+                    showNoReviewMessage();
+                    mLoadingIndicator.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
         sharedViewModel.getSavedReviewList().observe(this, reviewList -> {
 
             mAdapter.setReviewData(reviewList);
-//            StringBuilder reviewString = new StringBuilder();
-//            for (Review review : reviewList) {
-//                reviewString.append(review.getAuthor());
-//                reviewString.append("\n");
-//                reviewString.append(review.getContent());
-//                reviewString.append("\n\n");
-//            }
-//            reviewTextView.setText(reviewString.toString());
+
         });
+    }
+
+    /**
+     * This method sets the RecyclerView invisible and shows the error message
+     */
+    private void showErrorMessage() {
+        mReviewsRecyclerView.setVisibility(View.INVISIBLE);
+        mErrorMessage.setVisibility(View.VISIBLE);
+        mNoReviewsAvailableMessage.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * This method shows the RecyclerView and hides the error message
+     */
+    private void showReviewData() {
+        mReviewsRecyclerView.setVisibility(View.VISIBLE);
+        mErrorMessage.setVisibility(View.INVISIBLE);
+        mNoReviewsAvailableMessage.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * This method shows the RecyclerView and hides the error message
+     */
+    private void showNoReviewMessage() {
+        mReviewsRecyclerView.setVisibility(View.INVISIBLE);
+        mErrorMessage.setVisibility(View.INVISIBLE);
+        mNoReviewsAvailableMessage.setVisibility(View.VISIBLE);
     }
 }

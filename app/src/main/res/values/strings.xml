@@ -27,7 +27,7 @@
     <string name="extra_movie">movie</string>
     <string name="saved_instance_movies">movies</string>
     <string name="transition_poster">transition_poster</string>
-    <string name="error_message">Movie data could not be loaded. Please check your Internet Connection and try again.</string>
+    <string name="error_message">Movie data could not be loaded.\nPlease check your Internet Connection and try again.</string>
     <string name="poster_content_desc">Movie Poster</string>
     <string name="menu_item_most_popular">Most Popular</string>
     <string name="menu_item_top_rated">Top Rated</string>
@@ -35,4 +35,8 @@
     <string name="category_description">Description</string>
     <string name="category_videos">Videos</string>
     <string name="category_reviews">Reviews</string>
+    <string name="error_message_video">Videos could not be loaded.\nYou have to be online to watch the videos.\nPlease check your Internet Connection and try again.</string>
+    <string name="no_videos_message">Sorry, there are no videos available for this movie :(</string>
+    <string name="error_message_review">Reviews could not be loaded.\nYou have to be online to see the reviews.\nPlease check your Internet Connection and try again.</string>
+    <string name="no_reviews_message">Sorry, there are no reviews available for this movie :(</string>
 </resources>

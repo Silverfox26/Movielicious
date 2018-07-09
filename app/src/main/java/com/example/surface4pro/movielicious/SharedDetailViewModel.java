@@ -15,6 +15,9 @@ public class SharedDetailViewModel extends ViewModel {
     private final MutableLiveData<List<Video>> videoData = new MutableLiveData<List<Video>>();
     private final MutableLiveData<List<Review>> reviewData = new MutableLiveData<List<Review>>();
 
+    private final MutableLiveData<Integer> loadingStatusVideo = new MutableLiveData<Integer>();
+    private final MutableLiveData<Integer> loadingStatusReviews = new MutableLiveData<Integer>();
+
     public void saveMovie(Movie movie) {
         movieData.setValue(movie);
     }
@@ -37,5 +40,21 @@ public class SharedDetailViewModel extends ViewModel {
 
     public LiveData<List<Review>> getSavedReviewList() {
         return reviewData;
+    }
+
+    public LiveData<Integer> getLoadingStatusVideo() {
+        return loadingStatusVideo;
+    }
+
+    public void setLoadingStatusVideo(Integer loadingStatus) {
+        loadingStatusVideo.setValue(loadingStatus);
+    }
+
+    public LiveData<Integer> getLoadingStatusReviews() {
+        return loadingStatusReviews;
+    }
+
+    public void setLoadingStatusReviews(Integer loadingStatus) {
+        loadingStatusReviews.setValue(loadingStatus);
     }
 }

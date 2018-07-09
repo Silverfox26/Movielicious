@@ -35,7 +35,6 @@ public class MovieRepository {
         return mMoviesTopRated;
     }
 
-    // TODO NEEDS TO BE DONE OF THE MAIN THREAD
     public void insertMovies(List<Movie> movies) {
 
         mMovieDao.bulkInsertMovies(movies);

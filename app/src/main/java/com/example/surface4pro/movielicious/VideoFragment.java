@@ -11,12 +11,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.surface4pro.movielicious.utilities.NetworkUtils;
+
+import java.util.Objects;
 
 
 /**
@@ -24,15 +27,17 @@ import com.example.surface4pro.movielicious.utilities.NetworkUtils;
  */
 public class VideoFragment extends Fragment implements VideoAdapter.VideoAdapterOnClickHandler {
     private RecyclerView mVideosRecyclerView;
-    private VideoAdapter mAdapter;
+    public VideoAdapter mAdapter;
+    private TextView mErrorMessage;
+    private TextView mNoVideosAvailable;
+    private ProgressBar mLoadingIndicator;
 
     public VideoFragment() {
         // Required empty public constructor
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_video, container, false);
@@ -54,33 +59,67 @@ public class VideoFragment extends Fragment implements VideoAdapter.VideoAdapter
 
         // Initializing the View variables
         mVideosRecyclerView = view.findViewById(R.id.rv_video_fragment);
+        mErrorMessage = view.findViewById(R.id.tv_error_message_video);
+        mLoadingIndicator = view.findViewById(R.id.pb_loading_indicator_video);
+        mNoVideosAvailable = view.findViewById(R.id.tv_no_videos_message);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mVideosRecyclerView.setLayoutManager(layoutManager);
         mVideosRecyclerView.setHasFixedSize(false);
         mAdapter = new VideoAdapter(this);
         mVideosRecyclerView.setAdapter(mAdapter);
 
-        // TextView videoTextView = view.findViewById(R.id.tv_videos_fragment);
+        SharedDetailViewModel sharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(SharedDetailViewModel.class);
 
-        SharedDetailViewModel sharedViewModel = ViewModelProviders.of(getActivity()).get(SharedDetailViewModel.class);
-        sharedViewModel.getSavedVideoList().observe(this, videoList -> {
-
-            mAdapter.setVideoData(videoList);
-
-//            StringBuilder videoString = new StringBuilder();
-//            for (Video video : videoList) {
-//                videoString.append(video.getKey());
-//                videoString.append("\n");
-//                videoString.append(video.getName());
-//                videoString.append("\n");
-//                videoString.append(video.getSite());
-//                videoString.append("\n");
-//                videoString.append(video.getType());
-//                videoString.append("\n\n");
-//            }
-//            videoTextView.setText(videoString.toString());
-//        });
+        sharedViewModel.getLoadingStatusVideo().observe(this, (Integer loadingStatus) -> {
+            if (loadingStatus != null) {
+                if (loadingStatus == 1) {
+                    // show loading indicator
+                    mLoadingIndicator.setVisibility(View.VISIBLE);
+                } else if (loadingStatus == 2) {
+                    // show recycler view
+                    showVideoData();
+                    mLoadingIndicator.setVisibility(View.INVISIBLE);
+                } else if (loadingStatus == -1) {
+                    showErrorMessage();
+                    mLoadingIndicator.setVisibility(View.INVISIBLE);
+                } else if (loadingStatus == 0) {
+                    showNoVideosMessage();
+                    mLoadingIndicator.setVisibility(View.INVISIBLE);
+                }
+            }
         });
+
+        sharedViewModel.getSavedVideoList().observe(this, videoList -> {
+            mAdapter.setVideoData(videoList);
+        });
+    }
+
+    /**
+     * This method sets the RecyclerView invisible and shows the error message
+     */
+    private void showErrorMessage() {
+        mVideosRecyclerView.setVisibility(View.INVISIBLE);
+        mErrorMessage.setVisibility(View.VISIBLE);
+        mNoVideosAvailable.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * This method shows the RecyclerView and hides the error message
+     */
+    private void showVideoData() {
+        mVideosRecyclerView.setVisibility(View.VISIBLE);
+        mErrorMessage.setVisibility(View.INVISIBLE);
+        mNoVideosAvailable.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * This method shows the RecyclerView and hides the error message
+     */
+    private void showNoVideosMessage() {
+        mVideosRecyclerView.setVisibility(View.INVISIBLE);
+        mErrorMessage.setVisibility(View.INVISIBLE);
+        mNoVideosAvailable.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -88,9 +127,6 @@ public class VideoFragment extends Fragment implements VideoAdapter.VideoAdapter
 
         Uri webUri = NetworkUtils.buildYouTubeVideoURI(videoKey);
         Uri appUri = NetworkUtils.buildYouTubeAppVideoURI(videoKey);
-
-        Log.d("AAA", "onClick: " + appUri);
-        Log.d("AAA", "onClick: " + webUri);
 
         Intent appIntent = new Intent(Intent.ACTION_VIEW, appUri);
         Intent webIntent = new Intent(Intent.ACTION_VIEW, webUri);

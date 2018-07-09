@@ -38,9 +38,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
 
-    // TODO Add loading indicators to Video and Reviews
-    // TODO Put database queries on separat thread
-
     private URL url = null;
 
     //private MovieAdapter mMovieAdapter;
@@ -202,7 +199,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     }
 
     public void removeObservers() {
-        // TODO Maybe add check if Observer exists?
         mMovieViewModel.getMostPopularMovies().removeObserver(mObserver);
         mMovieViewModel.getTopRatedMovies().removeObserver(mObserver);
         mMovieViewModel.getFavoriteMovies().removeObserver(mObserver);
