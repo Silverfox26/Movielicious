@@ -12,9 +12,6 @@ import java.util.List;
 
 @Dao
 public interface MovieDao {
-    @Query("SELECT * from movie_table ORDER BY id ASC")
-    List<Movie> getAllMovies();
-
     @Query("SELECT * from movie_table WHERE origin = 0 ORDER BY popularity DESC")
     LiveData<List<Movie>> getMostPopularMovies();
 

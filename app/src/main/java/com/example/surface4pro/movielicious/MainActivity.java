@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.example.surface4pro.movielicious.data.MovieRoomDatabase;
 import com.example.surface4pro.movielicious.model.Movie;
+import com.example.surface4pro.movielicious.utilities.AppExecutors;
 import com.example.surface4pro.movielicious.utilities.MovieDbJsonUtils;
 import com.example.surface4pro.movielicious.utilities.NetworkStatus;
 import com.example.surface4pro.movielicious.utilities.NetworkUtils;
@@ -36,6 +37,9 @@ import java.net.URL;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
+
+    // TODO Add loading indicators to Video and Reviews
+    // TODO Put database queries on separat thread
 
     private URL url = null;
 
@@ -93,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         if (savedInstanceState != null && savedInstanceState.containsKey("selection")) {
             selection = savedInstanceState.getInt("selection");
         } else if (NetworkStatus.isOnline(this)) {
-            mMovieViewModel.deleteWithOrigin(MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
+            deleteMoviesByOrigin(MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
             loadMovieData(R.id.menu_most_popular, MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
         }
 
@@ -105,6 +109,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         } else if (selection == 2) {
             mMovieViewModel.getFavoriteMovies().observe(this, mObserver);
         }
+    }
+
+    private void deleteMoviesByOrigin(int origin) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mMovieViewModel.deleteWithOrigin(origin);
+            }
+        });
     }
 
     /**
@@ -163,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 mMovieViewModel.getMostPopularMovies().observe(this, mObserver);
                 mMoviesRecyclerView.smoothScrollToPosition(0);
                 if (NetworkStatus.isOnline(this)) {
-                    mMovieViewModel.deleteWithOrigin(MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
+                    deleteMoviesByOrigin(MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
                     loadMovieData(R.id.menu_most_popular, MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
                 }
                 return true;
@@ -173,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 mMovieViewModel.getTopRatedMovies().observe(this, mObserver);
                 mMoviesRecyclerView.smoothScrollToPosition(0);
                 if (NetworkStatus.isOnline(this)) {
-                    mMovieViewModel.deleteWithOrigin(MovieRoomDatabase.ORIGIN_ID_TOP_RATED);
+                    deleteMoviesByOrigin(MovieRoomDatabase.ORIGIN_ID_TOP_RATED);
                     loadMovieData(R.id.menu_top_rated, MovieRoomDatabase.ORIGIN_ID_TOP_RATED);
                 }
                 return true;
@@ -259,7 +272,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
             activity.mLoadingIndicator.setVisibility(View.INVISIBLE);
 
-            activity.mMovieViewModel.insertMovies(movies);
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    activity.mMovieViewModel.insertMovies(movies);
+                }
+            });
+
 
             if (movies != null) {
                 activity.showMovieData();

@@ -25,6 +25,7 @@ import com.example.surface4pro.movielicious.data.MovieRoomDatabase;
 import com.example.surface4pro.movielicious.model.Movie;
 import com.example.surface4pro.movielicious.model.Review;
 import com.example.surface4pro.movielicious.model.Video;
+import com.example.surface4pro.movielicious.utilities.AppExecutors;
 import com.example.surface4pro.movielicious.utilities.MovieDbJsonUtils;
 import com.example.surface4pro.movielicious.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
@@ -40,6 +41,8 @@ public class DetailActivity extends AppCompatActivity {
 
     private SharedDetailViewModel sharedViewModel;
 
+    private boolean movieIsFavorite;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +57,22 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent.hasExtra(getString(R.string.extra_movie))) {
             int movieId = intent.getIntExtra(getString(R.string.extra_movie), -1);
-            populateUI(movieId);
+
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    Movie movie = mMovieViewModel.getMovieById(movieId);
+                    movieIsFavorite = mMovieViewModel.isMovieFavorite(movie.getMovieId());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            populateUI(movie);
+                            sharedViewModel = ViewModelProviders.of(DetailActivity.this).get(SharedDetailViewModel.class);
+                            sharedViewModel.saveMovie(movie);
+                        }
+                    });
+                }
+            });
         }
 
         // Find the view pager that will allow the user to swipe between fragments
@@ -75,14 +93,9 @@ public class DetailActivity extends AppCompatActivity {
     /**
      * Populates the UI with the data from the passed in Movie object.
      *
-     * @param movieId Movie id.
+     * @param movie Movie id.
      */
-    private void populateUI(final int movieId) {
-
-        final Movie movie = mMovieViewModel.getMovieById(movieId);
-
-        sharedViewModel = ViewModelProviders.of(DetailActivity.this).get(SharedDetailViewModel.class);
-        sharedViewModel.saveMovie(movie);
+    private void populateUI(final Movie movie) {
 
         // Declare and initialize View variables
         ImageView mPosterImageView = findViewById(R.id.iv_movie_poster);
@@ -190,7 +203,7 @@ public class DetailActivity extends AppCompatActivity {
         }
         mGenreTextView.setText(genres.toString());
 
-        if (mMovieViewModel.isMovieFavorite(movie.getMovieId())) {
+        if (movieIsFavorite) {
             mFavoriteButton.setChecked(true);
             mFavoriteButton.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_twotone_favorite_24px));
         }
@@ -200,11 +213,24 @@ public class DetailActivity extends AppCompatActivity {
                 if (isChecked) {
                     movie.setOrigin(MovieRoomDatabase.ORIGIN_ID_FAVORITES);
                     movie.setId(0);
-                    mMovieViewModel.insertFavoriteMovie(movie);
                     mFavoriteButton.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_twotone_favorite_24px));
+
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            mMovieViewModel.insertFavoriteMovie(movie);
+                        }
+                    });
+
                 } else {
-                    mMovieViewModel.deleteFavorite(movie.getMovieId());
                     mFavoriteButton.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_twotone_favorite_border_24px));
+
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            mMovieViewModel.deleteFavorite(movie.getMovieId());
+                        }
+                    });
                 }
             }
         });
@@ -217,6 +243,7 @@ public class DetailActivity extends AppCompatActivity {
         URL videowUrl = NetworkUtils.buildVideoURL(movie.getMovieId());
         new FetchVideosTask(this).execute(videowUrl);
     }
+
 
     private static class FetchReviewsTask extends AsyncTask<URL, Void, List<Review>> {
 

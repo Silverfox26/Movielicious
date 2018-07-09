@@ -2,6 +2,7 @@ package com.example.surface4pro.movielicious.data;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
+import android.util.Log;
 
 import com.example.surface4pro.movielicious.model.Movie;
 
@@ -20,6 +21,7 @@ public class MovieRepository {
         mMoviesMostPopular = mMovieDao.getMostPopularMovies();
         mMoviesTopRated = mMovieDao.getTopRatedMovies();
         mMovieFavorites = mMovieDao.getFavoriteMovies();
+        Log.d("AAA", "MovieRepository: Constructor Called");
     }
 
     // Wrapper to get the list of movies
@@ -35,7 +37,9 @@ public class MovieRepository {
 
     // TODO NEEDS TO BE DONE OF THE MAIN THREAD
     public void insertMovies(List<Movie> movies) {
+
         mMovieDao.bulkInsertMovies(movies);
+
     }
 
     public void deleteWithOrigin(int origin) {
