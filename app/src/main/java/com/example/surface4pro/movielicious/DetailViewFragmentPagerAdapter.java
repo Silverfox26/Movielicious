@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018. Daniel Penz
+ */
+
 package com.example.surface4pro.movielicious;
 
 import android.content.Context;
@@ -5,10 +9,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+/**
+ * {@link ReviewAdapter} handles the Fragments of a
+ * {@link android.support.v4.view.ViewPager}
+ */
 public class DetailViewFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    private Context mContext;
+    // Member variable declaration
+    private final Context mContext;
 
+    /**
+     * Creates a DetailViewFragmentPagerAdapter.
+     */
     public DetailViewFragmentPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
         mContext = context;
@@ -17,7 +29,7 @@ public class DetailViewFragmentPagerAdapter extends FragmentPagerAdapter {
     /**
      * Return the Fragment associated with a specified position.
      *
-     * @param position
+     * @param position The selected position.
      */
     @Override
     public Fragment getItem(int position) {

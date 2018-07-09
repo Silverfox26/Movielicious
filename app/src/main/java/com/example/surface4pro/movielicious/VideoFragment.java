@@ -1,5 +1,8 @@
-package com.example.surface4pro.movielicious;
+/*
+ * Copyright (c) 2018. Daniel Penz
+ */
 
+package com.example.surface4pro.movielicious;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.ActivityNotFoundException;
@@ -20,16 +23,14 @@ import com.example.surface4pro.movielicious.utilities.NetworkUtils;
 
 import java.util.Objects;
 
-
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment to display the movie's videos in the DetailActivities's ViewPager.
  */
 public class VideoFragment extends Fragment implements VideoAdapter.VideoAdapterOnClickHandler {
 
-    // Create a data binding instance called mBinding of type ActivityMainBinding
-    FragmentVideoBinding mBinding;
-
-    public VideoAdapter mAdapter;
+    // Member variable declarations
+    private FragmentVideoBinding mBinding;
+    private VideoAdapter mAdapter;
 
     public VideoFragment() {
         // Required empty public constructor
@@ -38,7 +39,7 @@ public class VideoFragment extends Fragment implements VideoAdapter.VideoAdapter
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Set the Content View using DataBindingUtil to the activity_main layout
+        // Set the Content View using DataBindingUtil
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_video, container, false);
 
         return mBinding.getRoot();
@@ -58,40 +59,51 @@ public class VideoFragment extends Fragment implements VideoAdapter.VideoAdapter
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Configuring the RecyclerView and setting its adapter
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mBinding.rvVideoFragment.setLayoutManager(layoutManager);
         mBinding.rvVideoFragment.setHasFixedSize(false);
         mAdapter = new VideoAdapter(this);
         mBinding.rvVideoFragment.setAdapter(mAdapter);
 
+        // Get the instance of the SharedViewModel
         SharedDetailViewModel sharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(SharedDetailViewModel.class);
 
         sharedViewModel.getLoadingStatusVideo().observe(this, (Integer loadingStatus) -> {
+
+            // Check the video loading status and update the UI accordingly.
             if (loadingStatus != null) {
-                if (loadingStatus == 1) {
-                    // show loading indicator
-                    mBinding.pbLoadingIndicatorVideo.setVisibility(View.VISIBLE);
-                } else if (loadingStatus == 2) {
-                    // show recycler view
-                    showVideoData();
-                    mBinding.pbLoadingIndicatorVideo.setVisibility(View.INVISIBLE);
-                } else if (loadingStatus == -1) {
-                    showErrorMessage();
-                    mBinding.pbLoadingIndicatorVideo.setVisibility(View.INVISIBLE);
-                } else if (loadingStatus == 0) {
-                    showNoVideosMessage();
-                    mBinding.pbLoadingIndicatorVideo.setVisibility(View.INVISIBLE);
+                switch (loadingStatus) {
+                    case 1:
+                        // show loading indicator
+                        mBinding.pbLoadingIndicatorVideo.setVisibility(View.VISIBLE);
+                        break;
+                    case 2:
+                        // show recycler view
+                        showVideoData();
+                        mBinding.pbLoadingIndicatorVideo.setVisibility(View.INVISIBLE);
+                        break;
+                    case -1:
+                        showErrorMessage();
+                        mBinding.pbLoadingIndicatorVideo.setVisibility(View.INVISIBLE);
+                        break;
+                    case 0:
+                        showNoVideosMessage();
+                        mBinding.pbLoadingIndicatorVideo.setVisibility(View.INVISIBLE);
+                        break;
                 }
             }
         });
 
+        // Get and display the videos using an observer.
         sharedViewModel.getSavedVideoList().observe(this, videoList -> {
             mAdapter.setVideoData(videoList);
         });
     }
 
     /**
-     * This method sets the RecyclerView invisible and shows the error message
+     * This method shows the error message
+     * and hides the RecyclerView and the no videos message
      */
     private void showErrorMessage() {
         mBinding.rvVideoFragment.setVisibility(View.INVISIBLE);
@@ -100,7 +112,8 @@ public class VideoFragment extends Fragment implements VideoAdapter.VideoAdapter
     }
 
     /**
-     * This method shows the RecyclerView and hides the error message
+     * This method shows the RecyclerView
+     * and hides the error message and the no videos message.
      */
     private void showVideoData() {
         mBinding.rvVideoFragment.setVisibility(View.VISIBLE);
@@ -109,7 +122,8 @@ public class VideoFragment extends Fragment implements VideoAdapter.VideoAdapter
     }
 
     /**
-     * This method shows the RecyclerView and hides the error message
+     * This method shows the no videos message
+     * and hides the error message and the RecyclerView.
      */
     private void showNoVideosMessage() {
         mBinding.rvVideoFragment.setVisibility(View.INVISIBLE);
@@ -120,11 +134,14 @@ public class VideoFragment extends Fragment implements VideoAdapter.VideoAdapter
     @Override
     public void onClick(View v, String videoKey, int layoutPosition) {
 
+        // Create video URIs for the Youtube app and the browser
         Uri webUri = NetworkUtils.buildYouTubeVideoURI(videoKey);
         Uri appUri = NetworkUtils.buildYouTubeAppVideoURI(videoKey);
 
         Intent appIntent = new Intent(Intent.ACTION_VIEW, appUri);
         Intent webIntent = new Intent(Intent.ACTION_VIEW, webUri);
+
+        // Try to start the Youtube app, if it is not installed, open the intent in a browser.
         try {
             startActivity(appIntent);
         } catch (ActivityNotFoundException ex) {

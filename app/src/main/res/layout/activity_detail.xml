@@ -4,7 +4,6 @@
   ~ Copyright (c) 2018. Daniel Penz
   -->
 <layout>
-
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -22,7 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="125dp"
                 android:alpha="0.5"
-                android:contentDescription="@string/poster_content_desc"
+                android:contentDescription="@string/backdrop_content_description"
                 android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -36,6 +35,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginStart="16dp"
                 android:adjustViewBounds="true"
+                android:contentDescription="@string/poster_content_description"
                 android:scaleType="centerInside"
                 android:transitionName="transition_poster"
                 app:layout_constraintBottom_toTopOf="@+id/tabLayout"

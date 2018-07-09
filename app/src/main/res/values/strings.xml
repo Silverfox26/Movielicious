@@ -25,10 +25,9 @@
     <string name="genre_western">Western</string>
     <string name="number_of_votes">(%1$s)</string>
     <string name="extra_movie">movie</string>
-    <string name="saved_instance_movies">movies</string>
     <string name="transition_poster">transition_poster</string>
     <string name="error_message">Movie data could not be loaded.\nPlease check your Internet Connection and try again.</string>
-    <string name="poster_content_desc">Movie Poster</string>
+    <string name="poster_content_description">Movie Poster</string>
     <string name="menu_item_most_popular">Most Popular</string>
     <string name="menu_item_top_rated">Top Rated</string>
     <string name="menu_item_favorites">Favorites</string>
@@ -39,4 +38,9 @@
     <string name="no_videos_message">Sorry, there are no videos available for this movie :(</string>
     <string name="error_message_review">Reviews could not be loaded.\nYou have to be online to see the reviews.\nPlease check your Internet Connection and try again.</string>
     <string name="no_reviews_message">Sorry, there are no reviews available for this movie :(</string>
+    <string name="MENU_SELECTION_INSTANCE_KEY">selection</string>
+    <string name="backdrop_content_description">Backdrop image of the movie</string>
+    <string name="review_written_by">Written by:</string>
+    <string name="video_preview_content_description">Video\'s preview image</string>
+    <string name="no_favorites_message">It\'s empty here. Add some favorites :)</string>
 </resources>

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018. Daniel Penz
+ */
+
 package com.example.surface4pro.movielicious;
 
 import android.app.Application;
@@ -11,7 +15,8 @@ import java.util.List;
 
 public class MovieViewModel extends AndroidViewModel {
 
-    private MovieRepository mRepository;
+    // Member variable declarations
+    private final MovieRepository mRepository;
     private LiveData<List<Movie>> mMovies;
 
     public MovieViewModel(Application application) {
@@ -19,7 +24,6 @@ public class MovieViewModel extends AndroidViewModel {
         mRepository = new MovieRepository(application);
     }
 
-    // Getter Method to completely hide the implementation from the UI
     public LiveData<List<Movie>> getMostPopularMovies() {
         mMovies = mRepository.getMostPopularMovies();
         return mMovies;
@@ -56,5 +60,9 @@ public class MovieViewModel extends AndroidViewModel {
 
     public LiveData<List<Movie>> getFavoriteMovies() {
         return mRepository.getFavoriteMovies();
+    }
+
+    public boolean doesOriginExist(int origin) {
+        return mRepository.doesOriginExist(origin);
     }
 }

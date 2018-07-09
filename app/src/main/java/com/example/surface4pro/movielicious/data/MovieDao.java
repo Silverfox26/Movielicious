@@ -27,6 +27,9 @@ public interface MovieDao {
     @Query("SELECT EXISTS(SELECT * from movie_table WHERE movie_id = :movieId AND origin = 2)")
     boolean isMovieFavorite(int movieId);
 
+    @Query("SELECT EXISTS(SELECT * from movie_table WHERE origin = :origin)")
+    boolean doesOriginExist(int origin);
+
     @Query("DELETE from movie_table WHERE origin = :origin")
     void deleteWithOrigin(int origin);
 

@@ -21,7 +21,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 /**
- * {@link MovieAdapter} exposes an ArrayList of movies to a
+ * {@link MovieAdapter} exposes a List of movies to a
  * {@link android.support.v7.widget.RecyclerView}
  */
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
@@ -40,7 +40,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     }
 
     public interface MovieAdapterOnClickHandler {
-        void onClick(View v, int clickedMovieId, int layoutPosition);
+        void onClick(View v, int clickedMovieId);
     }
 
     /**
@@ -107,7 +107,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             int adapterPosition = getAdapterPosition();
             int id = mMovieData.get(adapterPosition).getId();
             Log.d("AAA_ADAPTER", "onClick: " + id);
-            mClickHandler.onClick(v, id, getAdapterPosition());
+            mClickHandler.onClick(v, id);
 
         }
     }
@@ -134,6 +134,4 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         mMovieData = movieData;
         notifyDataSetChanged();
     }
-
-
 }

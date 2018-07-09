@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018. Daniel Penz
+ */
+
 package com.example.surface4pro.movielicious.model;
 
 public class Video {
@@ -7,6 +11,14 @@ public class Video {
     private String site;
     private String type;
 
+    /**
+     * Video constructor
+     *
+     * @param key  The video's youtube key.
+     * @param name Name of the video.
+     * @param site Site that is hosting the video.
+     * @param type Type of the video.
+     */
     public Video(String key, String name, String site, String type) {
         this.key = key;
         this.name = name;

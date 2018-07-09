@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        android:contentDescription="@string/poster_content_desc"
+        android:contentDescription="@string/poster_content_description"
         android:scaleType="centerCrop"
         android:transitionName="transition_poster"
         tools:srcCompat="@drawable/no_poster" />

@@ -1,5 +1,8 @@
-package com.example.surface4pro.movielicious;
+/*
+ * Copyright (c) 2018. Daniel Penz
+ */
 
+package com.example.surface4pro.movielicious;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
@@ -15,14 +18,13 @@ import com.example.surface4pro.movielicious.databinding.FragmentDescriptionBindi
 
 import java.util.Objects;
 
-
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment to display the movie's description in the DetailActivities's ViewPager.
  */
 public class DescriptionFragment extends Fragment {
 
-    // Create a data binding instance called mBinding of type ActivityMainBinding
-    FragmentDescriptionBinding mBinding;
+    // Create data binding instance
+    private FragmentDescriptionBinding mBinding;
 
     public DescriptionFragment() {
         // Required empty public constructor
@@ -32,7 +34,7 @@ public class DescriptionFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Set the Content View using DataBindingUtil to the activity_main layout
+        // Set the Content View using DataBindingUtil
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_description, container, false);
 
         return mBinding.getRoot();
@@ -52,6 +54,8 @@ public class DescriptionFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Get the instance of the SharedViewModel and retrieve the movie's description
+        // from the database using an observer.
         SharedDetailViewModel sharedViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(SharedDetailViewModel.class);
         sharedViewModel.getSavedMovie().observe(this, movie ->
                 mBinding.tvDescriptionFragment.setText(Objects.requireNonNull(movie).getDescription()));

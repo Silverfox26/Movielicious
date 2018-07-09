@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2018. Daniel Penz
+ */
 package com.example.surface4pro.movielicious;
 
 import android.arch.lifecycle.LiveData;
@@ -10,13 +13,17 @@ import com.example.surface4pro.movielicious.model.Video;
 
 import java.util.List;
 
+/**
+ * ViewModel class to share data between the DetailActivity and the Fragments displayed in it.
+ */
 public class SharedDetailViewModel extends ViewModel {
-    private final MutableLiveData<Movie> movieData = new MutableLiveData<Movie>();
-    private final MutableLiveData<List<Video>> videoData = new MutableLiveData<List<Video>>();
-    private final MutableLiveData<List<Review>> reviewData = new MutableLiveData<List<Review>>();
 
-    private final MutableLiveData<Integer> loadingStatusVideo = new MutableLiveData<Integer>();
-    private final MutableLiveData<Integer> loadingStatusReviews = new MutableLiveData<Integer>();
+    // Member variable declaration and instantiation
+    private final MutableLiveData<Movie> movieData = new MutableLiveData<>();
+    private final MutableLiveData<List<Video>> videoData = new MutableLiveData<>();
+    private final MutableLiveData<List<Review>> reviewData = new MutableLiveData<>();
+    private final MutableLiveData<Integer> loadingStatusVideo = new MutableLiveData<>();
+    private final MutableLiveData<Integer> loadingStatusReviews = new MutableLiveData<>();
 
     public void saveMovie(Movie movie) {
         movieData.setValue(movie);

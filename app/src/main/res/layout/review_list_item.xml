@@ -18,7 +18,7 @@
             android:id="@+id/tv_written_by"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Written by:"
+            android:text="@string/review_written_by"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

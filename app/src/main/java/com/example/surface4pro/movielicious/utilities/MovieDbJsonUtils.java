@@ -14,6 +14,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/**
+ * This class contains methods for parsing JSON Strings received from the MovieDatabase.
+ */
 public final class MovieDbJsonUtils {
 
     /**
@@ -97,6 +100,12 @@ public final class MovieDbJsonUtils {
         return movieList;
     }
 
+    /**
+     * Parses a MovieDatabase JSON String into an ArrayList of Review objects.
+     *
+     * @param reviewJsonString a Json String received from TheMovieDatabase
+     * @return an ArrayList consisting of Review objects parsed from the reviewJsonString
+     */
     public static ArrayList<Review> getReviewDataFromJson(String reviewJsonString) {
         ArrayList<Review> reviewList = new ArrayList<>();
 
@@ -128,6 +137,12 @@ public final class MovieDbJsonUtils {
         return reviewList;
     }
 
+    /**
+     * Parses a MovieDatabase JSON String into an ArrayList of Video objects.
+     *
+     * @param videoJsonString a Json String received from TheMovieDatabase
+     * @return an ArrayList consisting of Video objects parsed from the videoJsonString
+     */
     public static ArrayList<Video> getVideoDataFromJson(String videoJsonString) {
         ArrayList<Video> videoList = new ArrayList<>();
 
@@ -164,5 +179,4 @@ public final class MovieDbJsonUtils {
         }
         return videoList;
     }
-
 }

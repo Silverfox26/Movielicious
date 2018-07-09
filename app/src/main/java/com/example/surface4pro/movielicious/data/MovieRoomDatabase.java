@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018. Daniel Penz
+ */
+
 package com.example.surface4pro.movielicious.data;
 
 import android.arch.persistence.room.Database;
@@ -9,6 +13,7 @@ import com.example.surface4pro.movielicious.model.Movie;
 
 @Database(entities = {Movie.class}, version = 1, exportSchema = false)
 public abstract class MovieRoomDatabase extends RoomDatabase {
+    // ID constants to identify the origin of a movie in the database.
     public static final int ORIGIN_ID_MOST_POPULAR = 0;
     public static final int ORIGIN_ID_TOP_RATED = 1;
     public static final int ORIGIN_ID_FAVORITES = 2;

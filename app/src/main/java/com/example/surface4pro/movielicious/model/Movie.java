@@ -10,7 +10,7 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 
-import com.example.surface4pro.movielicious.Converters;
+import com.example.surface4pro.movielicious.data.Converters;
 
 /**
  * Class for custom Movie objects.
@@ -52,7 +52,7 @@ public class Movie {
     /**
      * Movie constructor.
      *
-     * @param movieId               Id of the movie.
+     * @param movieId          Id of the movie.
      * @param title            Title of the movie.
      * @param originalTitle    Original Title of the movie.
      * @param voteCount        Number of votes the movie received.
@@ -89,7 +89,8 @@ public class Movie {
     /**
      * Movie constructor.
      *
-     * @param id               Id of the movie.
+     * @param id               Unique database Id of the movie.
+     * @param movieId          Id of the movie.
      * @param title            Title of the movie.
      * @param originalTitle    Original Title of the movie.
      * @param voteCount        Number of votes the movie received.

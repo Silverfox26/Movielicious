@@ -83,7 +83,7 @@ public final class NetworkUtils {
     }
 
     /**
-     * Builds the MovieDatabase API Review request URL based on the passed in movieId.
+     * Builds the MovieDatabase API review request URL based on the passed in movieId.
      *
      * @param movieId id of the selected movie
      * @return build URL
@@ -91,7 +91,7 @@ public final class NetworkUtils {
     public static URL buildReviewURL(int movieId) {
 
         /* Building the API request URL */
-        Uri builtUri = null;
+        Uri builtUri;
 
         builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
                 .appendPath(PATH_MOVIES)
@@ -111,7 +111,7 @@ public final class NetworkUtils {
     }
 
     /**
-     * Builds the MovieDatabase API Review request URL based on the passed in movieId.
+     * Builds the MovieDatabase API video request URL based on the passed in movieId.
      *
      * @param movieId id of the selected movie
      * @return build URL
@@ -119,7 +119,7 @@ public final class NetworkUtils {
     public static URL buildVideoURL(int movieId) {
 
         /* Building the API request URL */
-        Uri builtUri = null;
+        Uri builtUri;
 
         builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
                 .appendPath(PATH_MOVIES)
@@ -154,9 +154,9 @@ public final class NetworkUtils {
     }
 
     /**
-     * Builds the movie poster URL.
+     * Builds the video preview image URL.
      *
-     * @param videoKey the path to the movie poster
+     * @param videoKey the video's key
      * @return build mage URL
      */
     public static String buildVideoImageUrl(String videoKey) {
@@ -169,15 +169,15 @@ public final class NetworkUtils {
     }
 
     /**
-     * Builds the MovieDatabase API Review request URL based on the passed in movieId.
+     * Builds the youtube video http URI.
      *
-     * @param videoId id of the selected movie
-     * @return build URL
+     * @param videoId id of the selected video
+     * @return build URI
      */
     public static Uri buildYouTubeVideoURI(String videoId) {
 
         /* Building the API request URL */
-        Uri builtUri = null;
+        Uri builtUri;
 
         builtUri = Uri.parse(YOUTUBE_VIDEO_BASE_URL).buildUpon()
                 .appendQueryParameter(YOUTUBE_VIDEO_PARAM_QUERY, videoId)
@@ -187,10 +187,10 @@ public final class NetworkUtils {
     }
 
     /**
-     * Builds the MovieDatabase API Review request URL based on the passed in movieId.
+     * Builds the youtube video app URI.
      *
      * @param videoId id of the selected movie
-     * @return build URL
+     * @return build URI
      */
     public static Uri buildYouTubeAppVideoURI(String videoId) {
 

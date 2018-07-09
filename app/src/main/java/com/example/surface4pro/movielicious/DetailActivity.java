@@ -13,8 +13,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.Explode;
-import android.util.Log;
-import android.widget.CompoundButton;
 
 import com.example.surface4pro.movielicious.data.MovieRoomDatabase;
 import com.example.surface4pro.movielicious.databinding.ActivityDetailBinding;
@@ -33,23 +31,29 @@ import java.util.List;
 
 public class DetailActivity extends AppCompatActivity {
 
-    // Create a data binding instance called mBinding of type ActivityMainBinding
-    ActivityDetailBinding mBinding;
+    // Constants indicating the loading status
+    public static final int LOADING_STATUS_ERROR = -1;
+    public static final int LOADING_STATUS_NO_RESULTS_AVAILABLE = 0;
+    public static final int LOADING_STATUS_LOADING = 1;
+    public static final int LOADING_STATUS_LOADING_SUCCESSFUL = 2;
 
+    // Member variable declarations
+    private ActivityDetailBinding mBinding;
     private MovieViewModel mMovieViewModel;
     private SharedDetailViewModel sharedViewModel;
-
     private boolean movieIsFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Set the Content View using DataBindingUtil to the activity_main layout
+        // Set the Content View using DataBindingUtil
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
 
         // Set exit transition
         getWindow().setEnterTransition(new Explode());
 
+        // The ViewModelProvider creates the ViewModel, when the app first starts.
+        // When the activity is destroyed and recreated, the Provider returns the existing ViewModel.
         mMovieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
 
         // Get the intent, check its content, and populate the UI with its data
@@ -57,20 +61,22 @@ public class DetailActivity extends AppCompatActivity {
         if (intent.hasExtra(getString(R.string.extra_movie))) {
             int movieId = intent.getIntExtra(getString(R.string.extra_movie), -1);
 
-            AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    Movie movie = mMovieViewModel.getMovieById(movieId);
-                    movieIsFavorite = mMovieViewModel.isMovieFavorite(movie.getMovieId());
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            sharedViewModel = ViewModelProviders.of(DetailActivity.this).get(SharedDetailViewModel.class);
-                            sharedViewModel.saveMovie(movie);
-                            populateUI(movie);
-                        }
-                    });
-                }
+            // Retrieve the passed in movie on a background thread from the db using its movieID.
+            AppExecutors.getInstance().diskIO().execute(() -> {
+                Movie movie = mMovieViewModel.getMovieById(movieId);
+
+                // Check if the movie is already saved as a favorite.
+                movieIsFavorite = mMovieViewModel.isMovieFavorite(movie.getMovieId());
+
+                runOnUiThread(() -> {
+                    sharedViewModel = ViewModelProviders.of(DetailActivity.this).get(SharedDetailViewModel.class);
+
+                    // Save the Movie in the sharedViewModel, so that it is available
+                    // to the Video and Review Fragments.
+                    sharedViewModel.saveMovie(movie);
+
+                    populateUI(movie);
+                });
             });
         }
 
@@ -78,10 +84,10 @@ public class DetailActivity extends AppCompatActivity {
         // Create an adapter that knows which fragment should be shown on each page
         DetailViewFragmentPagerAdapter adapter = new DetailViewFragmentPagerAdapter(this, getSupportFragmentManager());
 
-        // Set the adapter onto the view pager
+        // Set the adapter to the ViewPager
         mBinding.viewPager.setAdapter(adapter);
 
-        // Give the TabLayout the ViewPager
+        // Pass the ViewPager to the TabLayout
         mBinding.tabLayout.setupWithViewPager(mBinding.viewPager);
 
     }
@@ -89,10 +95,11 @@ public class DetailActivity extends AppCompatActivity {
     /**
      * Populates the UI with the data from the passed in Movie object.
      *
-     * @param movie Movie id.
+     * @param movie Movie object.
      */
     private void populateUI(final Movie movie) {
 
+        // Check orientation and if Portrait load also the Backdrop image.
         int orientation = getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             String backdropUrl = NetworkUtils.buildImageUrl(movie.getBackdropPath());
@@ -182,48 +189,44 @@ public class DetailActivity extends AppCompatActivity {
         }
         mBinding.tvGenre.setText(genres.toString());
 
+        // If the movie is already a favorite, set the favorite button accordingly
         if (movieIsFavorite) {
             mBinding.tbFavorite.setChecked(true);
             mBinding.tbFavorite.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_twotone_favorite_24px));
         }
 
-        mBinding.tbFavorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    movie.setOrigin(MovieRoomDatabase.ORIGIN_ID_FAVORITES);
-                    movie.setId(0);
-                    mBinding.tbFavorite.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_twotone_favorite_24px));
+        // Listen to changes of the favorite button
+        mBinding.tbFavorite.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                // If movie is made favorite, set its favorite flag and clear its id.
+                movie.setOrigin(MovieRoomDatabase.ORIGIN_ID_FAVORITES);
+                movie.setId(0);
 
-                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            mMovieViewModel.insertFavoriteMovie(movie);
-                        }
-                    });
+                mBinding.tbFavorite.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_twotone_favorite_24px));
 
-                } else {
-                    mBinding.tbFavorite.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_twotone_favorite_border_24px));
+                // Add the favorite movie to the database
+                AppExecutors.getInstance().diskIO().execute(() -> mMovieViewModel.insertFavoriteMovie(movie));
 
-                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            mMovieViewModel.deleteFavorite(movie.getMovieId());
-                        }
-                    });
-                }
+            } else {
+                mBinding.tbFavorite.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_twotone_favorite_border_24px));
+
+                // Delete the favorite movie from the database
+                AppExecutors.getInstance().diskIO().execute(() -> mMovieViewModel.deleteFavorite(movie.getMovieId()));
             }
         });
 
-        Log.d("AAA", "populateUI: " + NetworkUtils.buildReviewURL(movie.getMovieId()));
+        // Build the URL to retrieve the movie's reviews and load them using AsyncTask
         URL reviewUrl = NetworkUtils.buildReviewURL(movie.getMovieId());
         new FetchReviewsTask(this).execute(reviewUrl);
 
-        Log.d("AAA", "populateUI: " + NetworkUtils.buildVideoURL(movie.getMovieId()));
-        URL videowUrl = NetworkUtils.buildVideoURL(movie.getMovieId());
-        new FetchVideosTask(this).execute(videowUrl);
+        // Build the URL to retrieve the movie's videos and load them using AsyncTask
+        URL videoUrl = NetworkUtils.buildVideoURL(movie.getMovieId());
+        new FetchVideosTask(this).execute(videoUrl);
     }
 
-
+    /**
+     * AsyncTask to retrieve the movie's reviews and save them in the SharedViewModel
+     */
     private static class FetchReviewsTask extends AsyncTask<URL, Void, List<Review>> {
 
         private final WeakReference<DetailActivity> activityReference;
@@ -240,7 +243,7 @@ public class DetailActivity extends AppCompatActivity {
             DetailActivity activity = activityReference.get();
             if (activity == null || activity.isFinishing()) return;
 
-            activity.sharedViewModel.setLoadingStatusReviews(1);
+            activity.sharedViewModel.setLoadingStatusReviews(LOADING_STATUS_LOADING);
         }
 
         @Override
@@ -268,17 +271,19 @@ public class DetailActivity extends AppCompatActivity {
             if (activity == null || activity.isFinishing()) return;
 
             if (reviews == null) {
-                activity.sharedViewModel.setLoadingStatusReviews(-1);
+                activity.sharedViewModel.setLoadingStatusReviews(LOADING_STATUS_ERROR);
             } else if (reviews.isEmpty()) {
-                activity.sharedViewModel.setLoadingStatusReviews(0);
+                activity.sharedViewModel.setLoadingStatusReviews(LOADING_STATUS_NO_RESULTS_AVAILABLE);
             } else {
                 activity.sharedViewModel.saveReviewList(reviews);
-                activity.sharedViewModel.setLoadingStatusReviews(2);
+                activity.sharedViewModel.setLoadingStatusReviews(LOADING_STATUS_LOADING_SUCCESSFUL);
             }
         }
     }
 
-
+    /**
+     * AsyncTask to retrieve the movie's videos and save them in the SharedViewModel
+     */
     private static class FetchVideosTask extends AsyncTask<URL, Void, List<Video>> {
 
         private final WeakReference<DetailActivity> activityReference;
@@ -295,7 +300,7 @@ public class DetailActivity extends AppCompatActivity {
             DetailActivity activity = activityReference.get();
             if (activity == null || activity.isFinishing()) return;
 
-            activity.sharedViewModel.setLoadingStatusVideo(1);
+            activity.sharedViewModel.setLoadingStatusVideo(LOADING_STATUS_LOADING);
         }
 
         @Override
@@ -323,12 +328,12 @@ public class DetailActivity extends AppCompatActivity {
             if (activity == null || activity.isFinishing()) return;
 
             if (videos == null) {
-                activity.sharedViewModel.setLoadingStatusVideo(-1);
+                activity.sharedViewModel.setLoadingStatusVideo(LOADING_STATUS_ERROR);
             } else if (videos.isEmpty()) {
-                activity.sharedViewModel.setLoadingStatusVideo(0);
+                activity.sharedViewModel.setLoadingStatusVideo(LOADING_STATUS_NO_RESULTS_AVAILABLE);
             } else {
                 activity.sharedViewModel.saveVideoList(videos);
-                activity.sharedViewModel.setLoadingStatusVideo(2);
+                activity.sharedViewModel.setLoadingStatusVideo(LOADING_STATUS_LOADING_SUCCESSFUL);
             }
         }
     }
