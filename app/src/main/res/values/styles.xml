@@ -5,10 +5,8 @@
         <item name="android:colorBackground">@android:color/background_dark</item>
     </style>
 
-    <style name="AppThemeNoActionBar" parent="Theme.AppCompat">
+    <style name="AppThemeNoActionBar" parent="Theme.AppCompat.NoActionBar">
         <item name="android:colorBackground">@android:color/background_dark</item>
-        <item name="colorPrimary">@android:color/transparent</item>
-        <item name="windowActionBarOverlay">true</item>
     </style>
 
 </resources>

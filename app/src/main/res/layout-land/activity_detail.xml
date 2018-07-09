@@ -14,7 +14,7 @@
 
 
     <ImageView
-        android:id="@+id/iv_poster"
+        android:id="@+id/iv_movie_poster"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
@@ -31,8 +31,6 @@
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
             android:paddingTop="16dp">
 
             <TextView
@@ -40,90 +38,101 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/rb_rating"
+                app:layout_constraintEnd_toStartOf="@+id/tb_favorite"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Deadpool 2" />
+
+            <ToggleButton
+                android:id="@+id/tb_favorite"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/ic_twotone_favorite_border_24px"
+                android:textOff=""
+                android:textOn=""
+                app:layout_constraintBottom_toTopOf="@+id/tv_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
             <RatingBar
                 android:id="@+id/rb_rating"
                 style="@style/Widget.AppCompat.RatingBar.Small"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="14dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginTop="8dp"
                 android:numStars="5"
                 android:stepSize="0.5"
+                app:layout_constraintBottom_toTopOf="@+id/tv_year"
                 app:layout_constraintEnd_toStartOf="@+id/tv_votes"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_year"
                 tools:rating="3.5" />
 
             <TextView
                 android:id="@+id/tv_votes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/rb_rating"
+                app:layout_constraintEnd_toEndOf="@+id/tb_favorite"
+                app:layout_constraintTop_toBottomOf="@+id/rb_rating"
                 tools:text="(451)" />
 
             <TextView
                 android:id="@+id/tv_genre"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/rounded_corner"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"
                 android:paddingBottom="4dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
                 android:paddingTop="4dp"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_year"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/tv_year"
+                app:layout_constraintTop_toBottomOf="@+id/rb_rating"
                 tools:text="Action" />
 
             <TextView
                 android:id="@+id/tv_year"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/tv_title"
                 app:layout_constraintTop_toBottomOf="@+id/tv_title"
                 tools:text="(2018)" />
-
-            <Switch
-                android:id="@+id/sw_favorite"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="Favorite"
-                android:textOff="Remove Favorite"
-                android:textOn="Make Favorite"
-                app:layout_constraintBottom_toTopOf="@+id/tabLayout"
-                app:layout_constraintEnd_toEndOf="@+id/tv_votes" />
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tabLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_genre" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_genre"
+                app:tabGravity="fill" />
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/viewPager"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
-
 
 
         </android.support.constraint.ConstraintLayout>

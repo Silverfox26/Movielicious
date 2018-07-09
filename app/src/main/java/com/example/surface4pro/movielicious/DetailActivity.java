@@ -6,9 +6,11 @@ package com.example.surface4pro.movielicious;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.Explode;
@@ -16,8 +18,8 @@ import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
-import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.example.surface4pro.movielicious.data.MovieRoomDatabase;
 import com.example.surface4pro.movielicious.model.Movie;
@@ -83,19 +85,27 @@ public class DetailActivity extends AppCompatActivity {
         sharedViewModel.saveMovie(movie);
 
         // Declare and initialize View variables
-        ImageView mPosterImageView = findViewById(R.id.iv_poster);
+        ImageView mPosterImageView = findViewById(R.id.iv_movie_poster);
+
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            ImageView mBackdropImageView = findViewById(R.id.iv_movie_backdrop);
+            String backdropUrl = NetworkUtils.buildImageUrl(movie.getBackdropPath());
+            Picasso.get().load(backdropUrl).placeholder(R.drawable.no_poster).into(mBackdropImageView);
+        }
+
         TextView mTitleTextView = findViewById(R.id.tv_title);
         TextView mYearTextView = findViewById(R.id.tv_year);
         RatingBar mRatingRatingBar = findViewById(R.id.rb_rating);
         TextView mVotesTextView = findViewById(R.id.tv_votes);
         TextView mGenreTextView = findViewById(R.id.tv_genre);
-        Switch mFavoriteSwitch = findViewById(R.id.sw_favorite);
+        ToggleButton mFavoriteButton = findViewById(R.id.tb_favorite);
 
-        // Set the ActionBar Title to the movie's title
+/*        // Set the ActionBar Title to the movie's title
         android.support.v7.app.ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setTitle(movie.getTitle());
-        }
+        }*/
 
         // Create the image URL and display it using Picasso
         String url = NetworkUtils.buildImageUrl(movie.getPosterPath());
@@ -181,18 +191,20 @@ public class DetailActivity extends AppCompatActivity {
         mGenreTextView.setText(genres.toString());
 
         if (mMovieViewModel.isMovieFavorite(movie.getMovieId())) {
-            mFavoriteSwitch.setChecked(true);
-
+            mFavoriteButton.setChecked(true);
+            mFavoriteButton.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_twotone_favorite_24px));
         }
 
-        mFavoriteSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mFavoriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     movie.setOrigin(MovieRoomDatabase.ORIGIN_ID_FAVORITES);
                     movie.setId(0);
                     mMovieViewModel.insertFavoriteMovie(movie);
+                    mFavoriteButton.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_twotone_favorite_24px));
                 } else {
                     mMovieViewModel.deleteFavorite(movie.getMovieId());
+                    mFavoriteButton.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_twotone_favorite_border_24px));
                 }
             }
         });

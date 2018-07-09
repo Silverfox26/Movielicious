@@ -98,7 +98,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
         // Create the image URL and display it using Picasso
         String url = NetworkUtils.buildVideoImageUrl(videoKey);
-        Picasso.get().load(url).placeholder(R.drawable.no_poster).into(holder.mVideoImage);
+        Picasso.get().load(url).placeholder(R.drawable.no_video).into(holder.mVideoImage);
     }
 
     /**

@@ -39,12 +39,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private URL url = null;
 
-    // TODO Add Video links to DtailActivity
-    // TODO Add reviews to DetailActivity
-    // TODO break ViewModel class into two one for Main one for Detail
-    // TODO clean up code
-    // TODO Add comments
-
     //private MovieAdapter mMovieAdapter;
     private RecyclerView mMoviesRecyclerView;
     private ProgressBar mLoadingIndicator;
@@ -98,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         if (savedInstanceState != null && savedInstanceState.containsKey("selection")) {
             selection = savedInstanceState.getInt("selection");
-        } else {
+        } else if (NetworkStatus.isOnline(this)) {
             mMovieViewModel.deleteWithOrigin(MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
             loadMovieData(R.id.menu_most_popular, MovieRoomDatabase.ORIGIN_ID_MOST_POPULAR);
         }

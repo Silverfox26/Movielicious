@@ -17,70 +17,85 @@
 
 
         <ImageView
-            android:id="@+id/iv_poster"
+            android:id="@+id/iv_movie_backdrop"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="125dp"
+            android:alpha="0.5"
             android:contentDescription="@string/poster_content_desc"
             android:scaleType="centerCrop"
-            android:transitionName="transition_poster"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@drawable/no_poster" />
+
+        <ImageView
+            android:id="@+id/iv_movie_poster"
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="16dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            android:transitionName="transition_poster"
+            app:layout_constraintBottom_toTopOf="@+id/tabLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/no_poster"
+            tools:layout_editor_absoluteY="67dp" />
 
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/rb_rating"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_poster"
+            app:layout_constraintEnd_toStartOf="@+id/tb_favorite"
+            app:layout_constraintStart_toEndOf="@+id/iv_movie_poster"
+            app:layout_constraintTop_toBottomOf="@+id/iv_movie_backdrop"
             tools:text="Deadpool 2" />
 
         <RatingBar
             android:id="@+id/rb_rating"
             style="@style/Widget.AppCompat.RatingBar.Small"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="14dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginTop="16dp"
             android:numStars="5"
             android:stepSize="0.5"
+            app:layout_constraintBottom_toTopOf="@+id/tv_year"
             app:layout_constraintEnd_toStartOf="@+id/tv_votes"
-            app:layout_constraintTop_toBottomOf="@+id/iv_poster"
+            app:layout_constraintTop_toBottomOf="@+id/tv_year"
             tools:rating="3.5" />
 
         <TextView
             android:id="@+id/tv_votes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="16dp"
             android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_poster"
+            app:layout_constraintBottom_toTopOf="@+id/rb_rating"
+            app:layout_constraintEnd_toEndOf="@+id/tb_favorite"
+            app:layout_constraintTop_toBottomOf="@+id/rb_rating"
             tools:text="(451)" />
 
         <TextView
             android:id="@+id/tv_genre"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginTop="8dp"
-            android:background="@drawable/rounded_corner"
-            android:paddingBottom="4dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="4dp"
             android:textColor="@android:color/white"
             android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/tv_year"
             app:layout_constraintTop_toBottomOf="@+id/tv_year"
             tools:text="Action" />
 
@@ -88,27 +103,16 @@
             android:id="@+id/tv_year"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toEndOf="@+id/iv_movie_poster"
             app:layout_constraintTop_toBottomOf="@+id/tv_title"
             tools:text="(2018)" />
-
-        <Switch
-            android:id="@+id/sw_favorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="Favorite"
-            android:textOff="Remove Favorite"
-            android:textOn="Make Favorite"
-            app:layout_constraintBottom_toTopOf="@+id/tabLayout"
-            app:layout_constraintEnd_toEndOf="@+id/tv_votes" />
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_genre" />
@@ -121,6 +125,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
+
+        <ToggleButton
+            android:id="@+id/tb_favorite"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/ic_twotone_favorite_border_24px"
+            android:textOff=""
+            android:textOn=""
+            app:layout_constraintBottom_toTopOf="@+id/tv_title"
+            app:layout_constraintEnd_toEndOf="@+id/iv_movie_backdrop"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
     </android.support.constraint.ConstraintLayout>
 </FrameLayout>
